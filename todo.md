@@ -77,3 +77,4 @@
 - [x] Fix: 26582 Paseo Callado showing same views/saves for Redfin and Zillow — should be separate numbers
 - [x] Remove deal pipeline card from dashboard
 - [x] Skip smart lists widget for now
+- [x] Goal tracker card — $20M annual sales volume goal, $5.7M sold so far, progress ring visual

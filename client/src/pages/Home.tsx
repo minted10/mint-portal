@@ -251,10 +251,13 @@ export default function Home() {
         )}
       </div>
 
-      {/* ── Main Grid: CRM Pulse + Smart Lists + Calendar ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      {/* ── Main Grid: CRM Pulse + Goal Tracker + Calendar ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* CRM Pulse */}
         <CRMPulseCard fubData={fubData} isLoading={fubLoading} />
+
+        {/* Goal Tracker */}
+        <GoalTrackerCard />
 
         {/* Today's Schedule */}
         <ScheduleCard />
@@ -473,6 +476,109 @@ function SmartListsCard({ fubData, isLoading }: { fubData: any; isLoading: boole
           })}
         </div>
       )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GOAL TRACKER CARD
+   ═══════════════════════════════════════════════════════════════ */
+function GoalTrackerCard() {
+  const goal = 20_000_000;
+  const sold = 5_700_000;
+  const pct = Math.round((sold / goal) * 100);
+  const remaining = goal - sold;
+
+  // SVG ring params
+  const size = 140;
+  const stroke = 10;
+  const radius = (size - stroke) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (pct / 100) * circumference;
+
+  // Monthly pace check
+  const now = new Date();
+  const monthsPassed = now.getMonth() + (now.getDate() / 30);
+  const expectedPct = Math.round((monthsPassed / 12) * 100);
+  const onTrack = pct >= expectedPct;
+
+  return (
+    <div className="bento-card bento-animate p-5 flex flex-col" style={{ animationDelay: "150ms" }}>
+      <div className="flex items-center gap-2 mb-4">
+        <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#F0FDF4" }}>
+          <Target className="h-4 w-4 text-[#6db08a]" />
+        </div>
+        <h3 className="text-sm font-bold uppercase tracking-wider" style={{ color: CHARCOAL }}>
+          2026 Goal
+        </h3>
+      </div>
+
+      {/* Ring Chart */}
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <div className="relative">
+          <svg width={size} height={size} className="-rotate-90">
+            {/* Background ring */}
+            <circle
+              cx={size / 2}
+              cy={size / 2}
+              r={radius}
+              fill="none"
+              stroke="#F0F2F5"
+              strokeWidth={stroke}
+            />
+            {/* Progress ring */}
+            <circle
+              cx={size / 2}
+              cy={size / 2}
+              r={radius}
+              fill="none"
+              stroke="#6db08a"
+              strokeWidth={stroke}
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={offset}
+              className="transition-all duration-1000 ease-out"
+            />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-2xl font-bold tabular-nums" style={{ color: CHARCOAL }}>
+              {pct}%
+            </span>
+            <span className="text-[10px] uppercase tracking-wider" style={{ color: MUTED }}>
+              of goal
+            </span>
+          </div>
+        </div>
+
+        {/* Stats below ring */}
+        <div className="mt-4 w-full space-y-2">
+          <div className="flex items-center justify-between rounded-xl px-3.5 py-2 bg-[#F7F8FA]">
+            <span className="text-xs font-medium" style={{ color: MUTED }}>Sold YTD</span>
+            <span className="text-sm font-bold text-[#6db08a] tabular-nums">
+              ${(sold / 1_000_000).toFixed(1)}M
+            </span>
+          </div>
+          <div className="flex items-center justify-between rounded-xl px-3.5 py-2 bg-[#F7F8FA]">
+            <span className="text-xs font-medium" style={{ color: MUTED }}>Goal</span>
+            <span className="text-sm font-bold tabular-nums" style={{ color: CHARCOAL }}>
+              ${(goal / 1_000_000).toFixed(0)}M
+            </span>
+          </div>
+          <div className="flex items-center justify-between rounded-xl px-3.5 py-2 bg-[#F7F8FA]">
+            <span className="text-xs font-medium" style={{ color: MUTED }}>Remaining</span>
+            <span className="text-sm font-bold tabular-nums" style={{ color: CHARCOAL }}>
+              ${(remaining / 1_000_000).toFixed(1)}M
+            </span>
+          </div>
+        </div>
+
+        {/* Pace indicator */}
+        <div className="mt-3 pt-3 border-t border-[#F0F2F5] w-full text-center">
+          <span className={`text-xs font-medium ${onTrack ? "text-[#6db08a]" : "text-amber-500"}`}>
+            {onTrack ? "✓ On track" : `⚠ ${expectedPct - pct}% behind pace`} · {Math.round(expectedPct)}% expected by now
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
