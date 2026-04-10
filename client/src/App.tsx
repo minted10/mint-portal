@@ -8,7 +8,7 @@ import DashboardLayout from "./components/DashboardLayout";
 import Home from "./pages/Home";
 import ListingDetail from "./pages/ListingDetail";
 import NewListing from "./pages/NewListing";
-import Clients from "./pages/Clients";
+import Listings from "./pages/Listings";
 import ThemePreview from "./pages/ThemePreview";
 
 function Router() {
@@ -19,10 +19,10 @@ function Router() {
         <DashboardLayout>
           <Switch>
             <Route path="/" component={Home} />
-            <Route path="/listings" component={Home} />
+            <Route path="/listings" component={Listings} />
             <Route path="/listings/new" component={NewListing} />
             <Route path="/listings/:id">{(params) => <ListingDetail id={Number(params.id)} />}</Route>
-            <Route path="/clients" component={Clients} />
+
             <Route path="/404" component={NotFound} />
             <Route component={NotFound} />
           </Switch>

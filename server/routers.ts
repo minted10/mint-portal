@@ -6,6 +6,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { nanoid } from "nanoid";
 import * as db from "./db";
+import { getFubDashboardData } from "./fub";
 
 // ─── LISTING ROUTER ─────────────────────────────────────────────────────────
 
@@ -855,6 +856,14 @@ const seedRouter = router({
   }),
 });
 
+// ─── FUB ROUTER ──────────────────────────────────────────────────────────────
+
+const fubRouter = router({
+  dashboard: protectedProcedure.query(async () => {
+    return getFubDashboardData();
+  }),
+});
+
 // ─── ROOT ROUTER ────────────────────────────────────────────────────────────
 
 export const appRouter = router({
@@ -875,6 +884,7 @@ export const appRouter = router({
   insights: insightsRouter,
   clientInvite: clientRouter,
   seed: seedRouter,
+  fub: fubRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -60,3 +60,14 @@
 - [x] Confirmation dialog before accepting an offer (irreversible action)
 - [x] When offer accepted, reject all other pending offers automatically
 - [ ] Tests for edit listing and offer acceptance workflow
+- [x] MintOS dashboard — redesign Home page as agent command center
+- [x] FUB integration — server-side dashboard endpoint for smart lists, tasks, deals, contacts
+- [x] Smart list widget — show each list with people count needing follow-up
+- [x] CRM Pulse widget — tasks overdue, due today, new leads
+- [x] Deal Pipeline widget — visual bar with stage breakdown
+- [x] Weather widget — current conditions for Costa Mesa
+- [x] Quote of the day widget — motivational quote
+- [ ] Calendar widget — wire to live Google Calendar API (currently placeholder data)
+- [ ] Tomorrow widget — wire to live Google Calendar API (currently placeholder)
+- [x] Update navigation to MintOS style (Home + Listings tabs, remove Clients/Dashboard)
+- [ ] Hero photo upload — upload from computer to S3

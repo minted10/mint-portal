@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getLoginUrl } from "@/const";
-import { LayoutDashboard, Home, LogOut, UserPlus, ChevronDown } from "lucide-react";
+import { Home, LogOut, ChevronDown, LayoutGrid } from "lucide-react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import { Button } from "./ui/button";
@@ -15,9 +15,8 @@ import { Button } from "./ui/button";
 const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663506091484/YnEeEYz8JCEZbD4t8BzqPW/mint-logo_67a65280.webp";
 
 const agentMenuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+  { icon: LayoutGrid, label: "Home", path: "/" },
   { icon: Home, label: "Listings", path: "/listings" },
-  { icon: UserPlus, label: "Clients", path: "/clients" },
 ];
 
 const clientMenuItems = [
@@ -49,7 +48,7 @@ export default function DashboardLayout({
           </div>
           <div className="flex flex-col items-center gap-3">
             <h1 className="text-xl font-medium tracking-tight text-center" style={{ color: "#1E1E1E" }}>
-              Welcome to your Client Portal
+              Welcome to MintOS
             </h1>
             <p className="text-sm text-center max-w-sm leading-relaxed" style={{ color: "#6B7280" }}>
               Sign in to access your listings, track progress, and manage your real estate transactions.
