@@ -701,9 +701,9 @@ const seedRouter = router({
     // Update property insights with REAL scraped data from Redfin & Zillow
     await db.updatePropertyInsights(listingId, {
       redfin_views: 1047,
-      zillow_views: 1047,
+      zillow_views: 2094,
       redfin_saves: 46,
-      zillow_saves: 46,
+      zillow_saves: 92,
       totalShowings: 7,
       totalOffers: 4,
       openHouseDates: JSON.stringify(["2026-04-05", "2026-04-12"]),

@@ -252,21 +252,13 @@ export default function Home() {
       </div>
 
       {/* ── Main Grid: CRM Pulse + Smart Lists + Calendar ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* CRM Pulse */}
         <CRMPulseCard fubData={fubData} isLoading={fubLoading} />
-
-        {/* Smart Lists */}
-        <SmartListsCard fubData={fubData} isLoading={fubLoading} />
 
         {/* Today's Schedule */}
         <ScheduleCard />
       </div>
-
-      {/* ── Deal Pipeline ── */}
-      {fubData?.deals && (
-        <DealPipelineCard deals={fubData.deals} />
-      )}
 
       {/* ── Your Listings ── */}
       <div>

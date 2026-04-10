@@ -71,3 +71,9 @@
 - [ ] Tomorrow widget — wire to live Google Calendar API (currently placeholder)
 - [x] Update navigation to MintOS style (Home + Listings tabs, remove Clients/Dashboard)
 - [ ] Hero photo upload — upload from computer to S3
+- [ ] Fix smart lists — pull actual FUB smart list names (1-15) instead of hardcoded names
+- [ ] Smart lists should show how many leads need to be reached out to in each list
+- [x] Remove deal pipeline card from dashboard
+- [x] Fix: 26582 Paseo Callado showing same views/saves for Redfin and Zillow — should be separate numbers
+- [x] Remove deal pipeline card from dashboard
+- [x] Skip smart lists widget for now
