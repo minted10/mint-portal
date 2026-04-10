@@ -22,3 +22,5 @@
 - [x] Test listing seeded: 26582 Paseo Callado, San Juan Capistrano, CA 92675
 - [x] Vitest tests for key server procedures
 - [x] Clean Apple-inspired design with Mint Real Estate branding throughout
+- [x] Create multiple dashboard theme mockups for Bryan to review
+- [ ] Implement selected dashboard theme

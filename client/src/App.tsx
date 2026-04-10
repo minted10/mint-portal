@@ -9,20 +9,26 @@ import Home from "./pages/Home";
 import ListingDetail from "./pages/ListingDetail";
 import NewListing from "./pages/NewListing";
 import Clients from "./pages/Clients";
+import ThemePreview from "./pages/ThemePreview";
 
 function Router() {
   return (
-    <DashboardLayout>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/listings" component={Home} />
-        <Route path="/listings/new" component={NewListing} />
-        <Route path="/listings/:id">{(params) => <ListingDetail id={Number(params.id)} />}</Route>
-        <Route path="/clients" component={Clients} />
-        <Route path="/404" component={NotFound} />
-        <Route component={NotFound} />
-      </Switch>
-    </DashboardLayout>
+    <Switch>
+      <Route path="/themes" component={ThemePreview} />
+      <Route>
+        <DashboardLayout>
+          <Switch>
+            <Route path="/" component={Home} />
+            <Route path="/listings" component={Home} />
+            <Route path="/listings/new" component={NewListing} />
+            <Route path="/listings/:id">{(params) => <ListingDetail id={Number(params.id)} />}</Route>
+            <Route path="/clients" component={Clients} />
+            <Route path="/404" component={NotFound} />
+            <Route component={NotFound} />
+          </Switch>
+        </DashboardLayout>
+      </Route>
+    </Switch>
   );
 }
 
