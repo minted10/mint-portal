@@ -50,3 +50,6 @@
 - [x] Add second test listing: 39851 Paseo Chaparro, Murrieta, CA 92562
 - [x] Scrape real Redfin/Zillow data and photos for 26582 Paseo Callado
 - [x] Scrape real Redfin/Zillow data and photos for 39851 Paseo Chaparro
+- [x] Fix: Use real Redfin property photos instead of AI-generated images
+- [x] Fix: Re-scrape accurate Zillow stats for 39851 Paseo Chaparro, Murrieta
+- [x] Update seed data with corrected photo URLs and stats

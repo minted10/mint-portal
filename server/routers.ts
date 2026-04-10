@@ -515,7 +515,7 @@ const seedRouter = router({
       status: "active" as any,
       listDate: new Date("2026-03-31"),
       description: "Coastal Nancy Meyers-inspired residence behind private gates in the coveted Paseo Collection of San Juan Capistrano. This stunning 5-bedroom, 5.5-bathroom home features a PebbleTec pool, detached casita, gourmet kitchen with Sub-Zero refrigerator and Taj Mahal quartzite countertops. Soaring ceilings, wide-plank hardwood floors, and designer finishes throughout. The private backyard is an entertainer's dream with built-in BBQ, fire pit, and lush landscaping.",
-      photoUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663506091484/YnEeEYz8JCEZbD4t8BzqPW/property-26582-paseo-callado_14d4ea1d.jpg",
+      photoUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663506091484/YnEeEYz8JCEZbD4t8BzqPW/real-26582-paseo-callado_cd26028d.jpg",
     });
 
     await db.initializeChecklistForListing(listingId);
@@ -679,10 +679,10 @@ const seedRouter = router({
 
     // Update property insights with REAL scraped data from Redfin & Zillow
     await db.updatePropertyInsights(listingId, {
-      redfin_views: 1043,
-      zillow_views: 2200,
+      redfin_views: 1047,
+      zillow_views: 1047,
       redfin_saves: 46,
-      zillow_saves: 90,
+      zillow_saves: 46,
       totalShowings: 7,
       totalOffers: 4,
       openHouseDates: JSON.stringify(["2026-04-05", "2026-04-12"]),
@@ -714,7 +714,7 @@ const seedRouter = router({
       status: "active" as any,
       listDate: new Date("2026-01-27"),
       description: "French Country estate in the prestigious La Cresta community on nearly 7 acres. This stunning property features two separate residences with stone accents, gray slate roof, and premium finishes throughout. The main home offers 4 bedrooms and 4 bathrooms with an open floor plan, gourmet kitchen, and expansive views. Enjoy the private hot tub, multiple outdoor entertaining areas, and proximity to the Santa Rosa Plateau Ecological Reserve. A rare opportunity for equestrian enthusiasts or those seeking ultimate privacy.",
-      photoUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663506091484/YnEeEYz8JCEZbD4t8BzqPW/property-39851-paseo-chaparro_434c6af8.jpg",
+      photoUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663506091484/YnEeEYz8JCEZbD4t8BzqPW/real-39851-paseo-chaparro_3a8c8b96.jpg",
     });
 
     await db.initializeChecklistForListing(listing2Id);
@@ -816,9 +816,9 @@ const seedRouter = router({
     // Update property insights for listing 2 with REAL scraped data
     await db.updatePropertyInsights(listing2Id, {
       redfin_views: 1673,
-      zillow_views: 3100,
+      zillow_views: 1385,
       redfin_saves: 78,
-      zillow_saves: 145,
+      zillow_saves: 52,
       totalShowings: 5,
       totalOffers: 2,
       openHouseDates: JSON.stringify(["2026-02-08", "2026-02-22", "2026-03-08"]),
