@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE `showings` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`listingId` int NOT NULL,\n\t`showingDate` timestamp NOT NULL,\n\t`agentName` varchar(255),\n\t`brokerage` varchar(255),\n\t`interestLevel` enum('Not Responsive','No Interest','Low','High'),\n\t`feedback` text,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `showings_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway05.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38cvNZHaM5HypBH.cda28aec25f9 --database YnEeEYz8JCEZbD4t8BzqPW --execute CREATE TABLE `showings` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`listingId` int NOT NULL,\n\t`showingDate` timestamp NOT NULL,\n\t`agentName` varchar(255),\n\t`brokerage` varchar(255),\n\t`interestLevel` enum('Not Responsive','No Interest','Low','High'),\n\t`feedback` text,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `showings_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 402
+}

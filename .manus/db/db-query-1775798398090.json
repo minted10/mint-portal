@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE `checklist_items` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`listingId` int NOT NULL,\n\t`stage` enum('pre-listing-appointment','post-listing-appointment','signed-listing-agreement','marketing-prep','active-on-market','review-and-responses','in-escrow','post-close') NOT NULL,\n\t`title` varchar(500) NOT NULL,\n\t`sortOrder` int NOT NULL DEFAULT 0,\n\t`itemStatus` enum('pending','in-progress','completed') NOT NULL DEFAULT 'pending',\n\t`dateCompleted` timestamp,\n\t`note` text,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `checklist_items_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway05.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38cvNZHaM5HypBH.cda28aec25f9 --database YnEeEYz8JCEZbD4t8BzqPW --execute CREATE TABLE `checklist_items` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`listingId` int NOT NULL,\n\t`stage` enum('pre-listing-appointment','post-listing-appointment','signed-listing-agreement','marketing-prep','active-on-market','review-and-responses','in-escrow','post-close') NOT NULL,\n\t`title` varchar(500) NOT NULL,\n\t`sortOrder` int NOT NULL DEFAULT 0,\n\t`itemStatus` enum('pending','in-progress','completed') NOT NULL DEFAULT 'pending',\n\t`dateCompleted` timestamp,\n\t`note` text,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `checklist_items_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 602
+}

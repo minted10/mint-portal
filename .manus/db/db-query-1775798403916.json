@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE `client_invitations` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`agentId` int NOT NULL,\n\t`listingId` int,\n\t`clientName` varchar(255) NOT NULL,\n\t`clientEmail` varchar(320) NOT NULL,\n\t`clientPhone` varchar(32),\n\t`inviteToken` varchar(128) NOT NULL,\n\t`inviteStatus` enum('pending','accepted','expired') NOT NULL DEFAULT 'pending',\n\t`acceptedByUserId` int,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`expiresAt` timestamp,\n\tCONSTRAINT `client_invitations_id` PRIMARY KEY(`id`),\n\tCONSTRAINT `client_invitations_inviteToken_unique` UNIQUE(`inviteToken`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway05.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38cvNZHaM5HypBH.cda28aec25f9 --database YnEeEYz8JCEZbD4t8BzqPW --execute CREATE TABLE `client_invitations` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`agentId` int NOT NULL,\n\t`listingId` int,\n\t`clientName` varchar(255) NOT NULL,\n\t`clientEmail` varchar(320) NOT NULL,\n\t`clientPhone` varchar(32),\n\t`inviteToken` varchar(128) NOT NULL,\n\t`inviteStatus` enum('pending','accepted','expired') NOT NULL DEFAULT 'pending',\n\t`acceptedByUserId` int,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`expiresAt` timestamp,\n\tCONSTRAINT `client_invitations_id` PRIMARY KEY(`id`),\n\tCONSTRAINT `client_invitations_inviteToken_unique` UNIQUE(`inviteToken`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 394
+}

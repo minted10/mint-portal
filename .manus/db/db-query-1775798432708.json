@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE `property_insights` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`listingId` int NOT NULL,\n\t`redfin_views` int DEFAULT 0,\n\t`zillow_views` int DEFAULT 0,\n\t`redfin_saves` int DEFAULT 0,\n\t`zillow_saves` int DEFAULT 0,\n\t`totalShowings` int DEFAULT 0,\n\t`totalOffers` int DEFAULT 0,\n\t`openHouseDates` json,\n\t`priceHistory` json,\n\t`lastUpdated` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\tCONSTRAINT `property_insights_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway05.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 38cvNZHaM5HypBH.cda28aec25f9 --database YnEeEYz8JCEZbD4t8BzqPW --execute CREATE TABLE `property_insights` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`listingId` int NOT NULL,\n\t`redfin_views` int DEFAULT 0,\n\t`zillow_views` int DEFAULT 0,\n\t`redfin_saves` int DEFAULT 0,\n\t`zillow_saves` int DEFAULT 0,\n\t`totalShowings` int DEFAULT 0,\n\t`totalOffers` int DEFAULT 0,\n\t`openHouseDates` json,\n\t`priceHistory` json,\n\t`lastUpdated` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\tCONSTRAINT `property_insights_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 566
+}

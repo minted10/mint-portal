@@ -1,0 +1,24 @@
+# Mint Real Estate Portal - TODO
+
+- [x] Database schema: users, listings, checklist_items, showings, offers, marketing_links, property_insights
+- [x] Migration SQL applied to database
+- [x] Server DB helpers for all entities
+- [x] tRPC routers: listings CRUD, checklist management, showings CRUD, offers CRUD, marketing links CRUD, property insights, client access
+- [x] Client invitation system (agent adds client, client gets login)
+- [x] Global theming: mint green (#6DB48E), white backgrounds, Apple-inspired typography
+- [x] DashboardLayout with sidebar navigation for agents
+- [x] Agent dashboard with listing cards showing key stats and checklist progress
+- [x] New listing form: client info, address, beds, baths, sqft, lot size, list price, MLS number
+- [x] Listing detail view with tabbed interface (Checklist, Insights, Showings, Offers, Marketing)
+- [x] 8-stage checklist system matching Google Sheet (Pre-Listing Appointment through Post Close)
+- [x] Checklist items with status, date completed, and notes tracking
+- [x] Property insights dashboard: views, saves, showings count, offers count, open houses, days on market, price history
+- [x] Showing log: date, buyer agent, brokerage, interest level (Not Responsive/No Interest/Low/High), feedback
+- [x] Offer tracking form matching Offer Sheet: agent, company, buyer name, offer price, escrow period, EMD, loan type, down payment, contingencies, escrow/title/warranty companies, notes
+- [ ] Offer comparison view for side-by-side analysis (future enhancement)
+- [x] Marketing links section: Marketing Calendar, Google Drive Folder, Photos Folder, Video, Matterport, Property Website
+- [x] Client read-only portal showing listing stats, checklist progress, showing summary, offer status
+- [x] Clients management page with invitation system
+- [x] Test listing seeded: 26582 Paseo Callado, San Juan Capistrano, CA 92675
+- [x] Vitest tests for key server procedures
+- [x] Clean Apple-inspired design with Mint Real Estate branding throughout
