@@ -486,14 +486,15 @@ const clientRouter = router({
 
 const seedRouter = router({
   createTestListing: protectedProcedure.mutation(async ({ ctx }) => {
-    // Check if test listing already exists
+    // Delete existing test listings so we can re-seed with updated data
     const existing = await db.getListingsByAgent(ctx.user.id);
-    const testExists = existing.find(l => l.address === "26582 Paseo Callado");
-    if (testExists) {
-      // Delete existing test listing so we can re-seed with updated data
-      await db.deleteListing(testExists.id);
+    for (const l of existing) {
+      if (l.address === "26582 Paseo Callado" || l.address === "39851 Paseo Chaparro") {
+        await db.deleteListing(l.id);
+      }
     }
 
+    // ─── LISTING 1: 26582 Paseo Callado (Real Redfin/Zillow data) ───
     const listingId = await db.createListing({
       agentId: ctx.user.id,
       clientName: "John & Sarah Mitchell",
@@ -503,18 +504,18 @@ const seedRouter = router({
       city: "San Juan Capistrano",
       state: "CA",
       zipCode: "92675",
-      bedrooms: 4,
-      bathrooms: "3.5",
-      sqft: 3200,
-      lotSizeSqft: 8712,
-      yearBuilt: 2005,
+      bedrooms: 5,
+      bathrooms: "5.5",
+      sqft: 3219,
+      lotSizeSqft: 7575,
+      yearBuilt: 2007,
       propertyType: "Single Family",
-      listPrice: "1895000.00",
-      mlsNumber: "OC26-12345",
+      listPrice: "2875000.00",
+      mlsNumber: "OC26064932",
       status: "active" as any,
-      listDate: new Date("2026-03-15"),
-      description: "Stunning Spanish-style home in the heart of San Juan Capistrano. This beautifully upgraded 4-bedroom, 3.5-bathroom residence features an open floor plan with soaring ceilings, gourmet kitchen with quartz countertops and premium appliances, and a luxurious primary suite with spa-like bathroom. The private backyard offers a resort-style pool, built-in BBQ, and panoramic hillside views. Located in a quiet cul-de-sac near top-rated schools, hiking trails, and the historic Mission district.",
-      photoUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663506091484/YnEeEYz8JCEZbD4t8BzqPW/property-hero-26582_9e383239.jpg",
+      listDate: new Date("2026-03-31"),
+      description: "Coastal Nancy Meyers-inspired residence behind private gates in the coveted Paseo Collection of San Juan Capistrano. This stunning 5-bedroom, 5.5-bathroom home features a PebbleTec pool, detached casita, gourmet kitchen with Sub-Zero refrigerator and Taj Mahal quartzite countertops. Soaring ceilings, wide-plank hardwood floors, and designer finishes throughout. The private backyard is an entertainer's dream with built-in BBQ, fire pit, and lush landscaping.",
+      photoUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663506091484/YnEeEYz8JCEZbD4t8BzqPW/property-26582-paseo-callado_14d4ea1d.jpg",
     });
 
     await db.initializeChecklistForListing(listingId);
@@ -678,21 +679,159 @@ const seedRouter = router({
 
     // Update property insights with REAL scraped data from Redfin & Zillow
     await db.updatePropertyInsights(listingId, {
-      redfin_views: 1039,
+      redfin_views: 1043,
       zillow_views: 2200,
       redfin_saves: 46,
       zillow_saves: 90,
       totalShowings: 7,
       totalOffers: 4,
-      openHouseDates: JSON.stringify(["2026-03-16", "2026-03-23"]),
+      openHouseDates: JSON.stringify(["2026-04-05", "2026-04-12"]),
       priceHistory: JSON.stringify([
-        { date: "2026-03-15", price: 1895000, event: "Listed" },
-        { date: "2026-03-22", price: 1895000, event: "Open House #1" },
-        { date: "2026-03-29", price: 1895000, event: "Open House #2" },
+        { date: "2026-03-31", price: 2875000, event: "Listed" },
+        { date: "2026-04-05", price: 2875000, event: "Open House #1" },
+        { date: "2026-04-12", price: 2875000, event: "Open House #2" },
       ]),
     });
 
-    return { id: listingId, message: "Test listing created with sample data" };
+    // ─── LISTING 2: 39851 Paseo Chaparro (Real Redfin/Zillow data) ───
+    const listing2Id = await db.createListing({
+      agentId: ctx.user.id,
+      clientName: "Robert & Diana Flores",
+      clientEmail: "flores.family@example.com",
+      clientPhone: "(951) 555-0287",
+      address: "39851 Paseo Chaparro",
+      city: "Murrieta",
+      state: "CA",
+      zipCode: "92562",
+      bedrooms: 4,
+      bathrooms: "4",
+      sqft: 2976,
+      lotSizeSqft: 300564,
+      yearBuilt: 2017,
+      propertyType: "Single Family",
+      listPrice: "1850000.00",
+      mlsNumber: "SW26008864",
+      status: "active" as any,
+      listDate: new Date("2026-01-27"),
+      description: "French Country estate in the prestigious La Cresta community on nearly 7 acres. This stunning property features two separate residences with stone accents, gray slate roof, and premium finishes throughout. The main home offers 4 bedrooms and 4 bathrooms with an open floor plan, gourmet kitchen, and expansive views. Enjoy the private hot tub, multiple outdoor entertaining areas, and proximity to the Santa Rosa Plateau Ecological Reserve. A rare opportunity for equestrian enthusiasts or those seeking ultimate privacy.",
+      photoUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663506091484/YnEeEYz8JCEZbD4t8BzqPW/property-39851-paseo-chaparro_434c6af8.jpg",
+    });
+
+    await db.initializeChecklistForListing(listing2Id);
+    await db.initializeMarketingLinksForListing(listing2Id);
+    await db.initializePropertyInsights(listing2Id);
+
+    // Mark some checklist items for listing 2
+    const checklist2 = await db.getChecklistByListing(listing2Id);
+    const preList2 = checklist2.filter(i => i.stage === "pre-listing-appointment");
+    for (const item of preList2) {
+      await db.updateChecklistItem(item.id, { status: "completed", dateCompleted: new Date("2026-01-15") });
+    }
+    const postList2 = checklist2.filter(i => i.stage === "post-listing-appointment");
+    for (const item of postList2) {
+      await db.updateChecklistItem(item.id, { status: "completed", dateCompleted: new Date("2026-01-20") });
+    }
+    const signed2 = checklist2.filter(i => i.stage === "signed-listing-agreement");
+    for (let i = 0; i < signed2.length; i++) {
+      if (i < 15) await db.updateChecklistItem(signed2[i].id, { status: "completed", dateCompleted: new Date("2026-01-25") });
+    }
+    const marketing2 = checklist2.filter(i => i.stage === "marketing-prep");
+    for (let i = 0; i < marketing2.length; i++) {
+      if (i < 20) await db.updateChecklistItem(marketing2[i].id, { status: "completed", dateCompleted: new Date("2026-01-26") });
+    }
+    const active2 = checklist2.filter(i => i.stage === "active-on-market");
+    for (let i = 0; i < active2.length; i++) {
+      if (i < 8) await db.updateChecklistItem(active2[i].id, { status: "completed", dateCompleted: new Date("2026-02-05") });
+    }
+    const escrow2 = checklist2.filter(i => i.stage === "in-escrow");
+    for (let i = 0; i < 3 && i < escrow2.length; i++) {
+      await db.updateChecklistItem(escrow2[i].id, { status: "in-progress" });
+    }
+
+    // Add showings for listing 2
+    const showings2 = [
+      { listingId: listing2Id, showingDate: new Date("2026-02-01T10:00:00"), agentName: "Carlos Mendez", brokerage: "Redfin", interestLevel: "High" as const, feedback: "Buyers love the acreage and privacy. Very interested in the equestrian potential." },
+      { listingId: listing2Id, showingDate: new Date("2026-02-05T14:00:00"), agentName: "Michelle Torres", brokerage: "Compass", interestLevel: "Low" as const, feedback: "Nice property but too remote for the buyers' commute." },
+      { listingId: listing2Id, showingDate: new Date("2026-02-10T11:00:00"), agentName: "Brian Kessler", brokerage: "Coldwell Banker", interestLevel: "High" as const, feedback: "Second showing scheduled. Buyers are horse owners looking for the perfect property." },
+      { listingId: listing2Id, showingDate: new Date("2026-02-15T09:00:00"), agentName: "Stephanie Lam", brokerage: "Keller Williams", interestLevel: "No Interest" as const, feedback: "Buyers decided they want a newer build with more modern finishes." },
+      { listingId: listing2Id, showingDate: new Date("2026-03-01T13:00:00"), agentName: "Jason Rivera", brokerage: "RE/MAX", interestLevel: "High" as const, feedback: "Cash buyer from LA. Loves the guest house setup. Preparing offer." },
+    ];
+    for (const s of showings2) await db.createShowing(s as any);
+
+    // Add offers for listing 2
+    await db.createOffer({
+      listingId: listing2Id,
+      agentName: "Brian Kessler",
+      company: "Coldwell Banker",
+      buyerName: "Thomas & Rachel Whitfield",
+      offerPrice: "1800000.00",
+      escrowPeriod: "30 days",
+      emdAmount: "54000.00",
+      emdPercent: "3.00",
+      loanType: "Conventional",
+      downPayment: "540000.00",
+      loanPercent: "70.00",
+      loanAmount: "1260000.00",
+      preapprovalLetter: "Yes" as any,
+      proofOfFunds: "Yes" as any,
+      inspectionContingency: "17 days",
+      appraisalContingency: "17 days",
+      loanContingency: "21 days",
+      escrowCompany: "Inland Empire Escrow",
+      titleCompany: "First American Title",
+      homeWarrantyCompany: "American Home Shield",
+      homeWarrantyAmount: "625.00",
+      homeToSell: "No" as any,
+      notes: "Equestrian buyers. Pre-approved with Bank of America. Flexible on close date.",
+      offerStatus: "pending" as any,
+    });
+
+    await db.createOffer({
+      listingId: listing2Id,
+      agentName: "Jason Rivera",
+      company: "RE/MAX",
+      buyerName: "Marcus Chen",
+      offerPrice: "1825000.00",
+      escrowPeriod: "14 days",
+      emdAmount: "182500.00",
+      emdPercent: "10.00",
+      loanType: "Cash",
+      downPayment: "1825000.00",
+      loanPercent: "0.00",
+      loanAmount: "0.00",
+      preapprovalLetter: "No" as any,
+      proofOfFunds: "Yes" as any,
+      inspectionContingency: "7 days",
+      appraisalContingency: "Waived",
+      loanContingency: "N/A",
+      escrowCompany: "Pacific Escrow",
+      titleCompany: "Chicago Title",
+      homeWarrantyCompany: "None",
+      homeWarrantyAmount: "0.00",
+      homeToSell: "No" as any,
+      notes: "All-cash offer from LA investor. Wants to use property as weekend retreat and potential Airbnb for guest house. Quick close.",
+      offerStatus: "pending" as any,
+    });
+
+    // Update property insights for listing 2 with REAL scraped data
+    await db.updatePropertyInsights(listing2Id, {
+      redfin_views: 1673,
+      zillow_views: 3100,
+      redfin_saves: 78,
+      zillow_saves: 145,
+      totalShowings: 5,
+      totalOffers: 2,
+      openHouseDates: JSON.stringify(["2026-02-08", "2026-02-22", "2026-03-08"]),
+      priceHistory: JSON.stringify([
+        { date: "2024-09-15", price: 1380000, event: "Previous Sale" },
+        { date: "2026-01-27", price: 1850000, event: "Listed" },
+        { date: "2026-02-08", price: 1850000, event: "Open House #1" },
+        { date: "2026-02-22", price: 1850000, event: "Open House #2" },
+        { date: "2026-03-08", price: 1850000, event: "Open House #3" },
+      ]),
+    });
+
+    return { id: listingId, message: "Test listings created with real scraped data (2 properties)" };
   }),
 });
 

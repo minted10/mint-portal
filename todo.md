@@ -45,3 +45,8 @@
 - [x] Add activity feed with vertical timeline
 - [x] Add inline sparklines next to metrics
 - [x] Top navigation bar with logo left, profile right, nav tabs across top
+- [x] Simplify main dashboard to show only listing hero cards (not full bento detail)
+- [x] Move bento detail view (KPIs, charts, activity, checklist) to the listing detail page
+- [x] Add second test listing: 39851 Paseo Chaparro, Murrieta, CA 92562
+- [x] Scrape real Redfin/Zillow data and photos for 26582 Paseo Callado
+- [x] Scrape real Redfin/Zillow data and photos for 39851 Paseo Chaparro
