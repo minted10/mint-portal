@@ -26,6 +26,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Plus, Trash2, FileText, Columns3, List } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
@@ -50,6 +60,7 @@ export default function OffersTab({ listingId, readOnly, listPrice }: { listingI
   const utils = trpc.useUtils();
   const [open, setOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"list" | "compare">("list");
+  const [confirmAccept, setConfirmAccept] = useState<{ id: number; buyerName: string } | null>(null);
 
   const emptyForm = {
     agentName: "", company: "", buyerName: "", offerPrice: "", escrowPeriod: "",
@@ -74,11 +85,26 @@ export default function OffersTab({ listingId, readOnly, listPrice }: { listingI
   });
 
   const updateMutation = trpc.offer.update.useMutation({
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       utils.offer.list.invalidate({ listingId });
-      toast.success("Offer updated");
+      utils.listing.dashboardStats.invalidate({ id: listingId });
+      utils.listing.getById.invalidate({ id: listingId });
+      if (variables.offerStatus === "accepted") {
+        toast.success("Offer accepted — listing moved to Under Contract");
+      } else {
+        toast.success("Offer updated");
+      }
     },
   });
+
+  // Intercept status changes — if "accepted", show confirmation first
+  const handleStatusChange = (offerId: number, newStatus: string, buyerName: string) => {
+    if (newStatus === "accepted") {
+      setConfirmAccept({ id: offerId, buyerName });
+    } else {
+      updateMutation.mutate({ id: offerId, offerStatus: newStatus as any });
+    }
+  };
 
   const deleteMutation = trpc.offer.delete.useMutation({
     onSuccess: () => {
@@ -241,7 +267,7 @@ export default function OffersTab({ listingId, readOnly, listPrice }: { listingI
           </CardContent>
         </Card>
       ) : viewMode === "compare" && hasMultipleOffers ? (
-        <OfferComparisonView offers={offers} readOnly={readOnly} updateMutation={updateMutation} deleteMutation={deleteMutation} listPrice={listPrice} />
+        <OfferComparisonView offers={offers} readOnly={readOnly} updateMutation={updateMutation} deleteMutation={deleteMutation} listPrice={listPrice} onStatusChange={handleStatusChange} />
       ) : (
         <Accordion type="multiple" defaultValue={offers.map(o => String(o.id))} className="space-y-2">
           {offers.map((offer) => (
@@ -290,7 +316,7 @@ export default function OffersTab({ listingId, readOnly, listPrice }: { listingI
                   <div className="flex items-center gap-2 mt-4 pt-3 border-t">
                     <Select
                       value={offer.offerStatus}
-                      onValueChange={(v) => updateMutation.mutate({ id: offer.id, offerStatus: v as any })}
+                      onValueChange={(v) => handleStatusChange(offer.id, v, offer.buyerName || "Unknown Buyer")}
                     >
                       <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
                       <SelectContent>
@@ -313,17 +339,49 @@ export default function OffersTab({ listingId, readOnly, listPrice }: { listingI
           ))}
         </Accordion>
       )}
+
+      {/* Acceptance Confirmation Dialog */}
+      <AlertDialog open={!!confirmAccept} onOpenChange={(open) => { if (!open) setConfirmAccept(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Accept this offer?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Accepting <span className="font-semibold text-foreground">{confirmAccept?.buyerName}</span>'s offer will:
+              <ul className="list-disc ml-5 mt-2 space-y-1">
+                <li>Move the listing status to <span className="font-medium">Under Contract</span></li>
+                <li>Reject all other pending offers</li>
+              </ul>
+              <p className="mt-2">This action cannot be undone.</p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-[#6db08a] hover:bg-[#5a9a75] text-white"
+              onClick={() => {
+                if (confirmAccept) {
+                  updateMutation.mutate({ id: confirmAccept.id, offerStatus: "accepted" });
+                  setConfirmAccept(null);
+                }
+              }}
+            >
+              Accept Offer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
 
 /* ─── Offer Comparison View ─── */
-function OfferComparisonView({ offers, readOnly, updateMutation, deleteMutation, listPrice }: {
+function OfferComparisonView({ offers, readOnly, updateMutation, deleteMutation, listPrice, onStatusChange }: {
   offers: any[];
   readOnly: boolean;
   updateMutation: any;
   deleteMutation: any;
   listPrice?: string | null;
+  onStatusChange: (offerId: number, newStatus: string, buyerName: string) => void;
 }) {
   // Find highest offer price for highlighting
   const prices = offers.map(o => parseFloat(o.offerPrice || "0")).filter(n => !isNaN(n));
@@ -457,7 +515,7 @@ function OfferComparisonView({ offers, readOnly, updateMutation, deleteMutation,
                             !readOnly ? (
                               <Select
                                 value={offer.offerStatus}
-                                onValueChange={(v) => updateMutation.mutate({ id: offer.id, offerStatus: v as any })}
+                                onValueChange={(v) => onStatusChange(offer.id, v, offer.buyerName || "Unknown Buyer")}
                               >
                                 <SelectTrigger className="h-7 text-xs w-28"><SelectValue /></SelectTrigger>
                                 <SelectContent>

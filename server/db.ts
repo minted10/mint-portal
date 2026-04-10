@@ -283,6 +283,29 @@ export async function deleteOffer(id: number) {
   await db.delete(offers).where(eq(offers.id, id));
 }
 
+/** Reject all pending offers for a listing except the given accepted offer */
+export async function rejectOtherOffers(listingId: number, acceptedOfferId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(offers)
+    .set({ offerStatus: "rejected" as any })
+    .where(
+      and(
+        eq(offers.listingId, listingId),
+        eq(offers.offerStatus, "pending" as any),
+        sql`${offers.id} != ${acceptedOfferId}`
+      )
+    );
+}
+
+/** Get a single offer by ID */
+export async function getOfferById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(offers).where(eq(offers.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
 // ─── MARKETING LINKS HELPERS ────────────────────────────────────────────────
 
 export async function getMarketingLinksByListing(listingId: number) {

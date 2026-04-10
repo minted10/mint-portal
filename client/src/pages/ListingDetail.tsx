@@ -45,15 +45,17 @@ import {
   Link2,
   Megaphone,
   Calendar,
+  Pencil,
 } from "lucide-react";
 import { useLocation } from "wouter";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { STAGE_LABELS } from "../../../shared/checklistTemplate";
 import ChecklistTab from "@/components/listing/ChecklistTab";
 import ShowingsTab from "@/components/listing/ShowingsTab";
 import OffersTab from "@/components/listing/OffersTab";
 import MarketingTab from "@/components/listing/MarketingTab";
 import InsightsTab from "@/components/listing/InsightsTab";
+import EditListingDialog from "@/components/listing/EditListingDialog";
 
 /* ── Color Constants ── */
 const MINT = "#6db08a";
@@ -138,6 +140,7 @@ export default function ListingDetail({ id }: { id: number }) {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
   const isClient = (user as any)?.portalRole === "client";
+  const [editOpen, setEditOpen] = useState(false);
 
   const { data: listing, isLoading: listingLoading } = trpc.listing.getById.useQuery({ id });
   const { data: stats } = trpc.listing.dashboardStats.useQuery({ id });
@@ -227,11 +230,24 @@ export default function ListingDetail({ id }: { id: number }) {
                 <h1 className="text-2xl font-bold tracking-tight" style={{ color: CHARCOAL }}>
                   {listing.address}
                 </h1>
-                <p className="text-sm flex items-center gap-1 mt-0.5" style={{ color: MUTED }}>
-                  <MapPin className="h-3.5 w-3.5" />
-                  {[listing.city, listing.state, listing.zipCode].filter(Boolean).join(", ")}
-                  {listing.mlsNumber && <span className="ml-2">MLS# {listing.mlsNumber}</span>}
-                </p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <p className="text-sm flex items-center gap-1" style={{ color: MUTED }}>
+                    <MapPin className="h-3.5 w-3.5" />
+                    {[listing.city, listing.state, listing.zipCode].filter(Boolean).join(", ")}
+                    {listing.mlsNumber && <span className="ml-2">MLS# {listing.mlsNumber}</span>}
+                  </p>
+                  {!isClient && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 px-2.5 text-xs gap-1 rounded-lg ml-auto"
+                      onClick={() => setEditOpen(true)}
+                    >
+                      <Pencil className="h-3 w-3" />
+                      Edit
+                    </Button>
+                  )}
+                </div>
                 <div className="text-3xl font-bold mt-3 tracking-tight" style={{ color: CHARCOAL }}>
                   {formatPrice(listing.listPrice)}
                 </div>
@@ -357,6 +373,11 @@ export default function ListingDetail({ id }: { id: number }) {
           <p className="kpi-label mb-2">Property Description</p>
           <p className="text-sm leading-relaxed" style={{ color: MUTED }}>{listing.description}</p>
         </div>
+      )}
+
+      {/* Edit Listing Dialog */}
+      {!isClient && listing && (
+        <EditListingDialog listing={listing} open={editOpen} onOpenChange={setEditOpen} />
       )}
     </div>
   );

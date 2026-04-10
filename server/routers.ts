@@ -361,8 +361,28 @@ const offerRouter = router({
       if (ctx.user.portalRole === "client") {
         throw new TRPCError({ code: "FORBIDDEN" });
       }
+
+      // Verify the offer exists and agent owns the listing
+      const offer = await db.getOfferById(input.id);
+      if (!offer) throw new TRPCError({ code: "NOT_FOUND", message: "Offer not found" });
+      const listing = await db.getListingById(offer.listingId);
+      if (!listing) throw new TRPCError({ code: "NOT_FOUND", message: "Listing not found" });
+      if (listing.agentId !== ctx.user.id && ctx.user.role !== "admin") {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Only the listing agent can update offers" });
+      }
+
       const { id, ...data } = input;
       await db.updateOffer(id, data as any);
+
+      // ─── ACCEPTANCE WORKFLOW ───
+      if (input.offerStatus === "accepted") {
+        // 1. Update listing status to "under-contract"
+        await db.updateListing(offer.listingId, { status: "under-contract" as any });
+
+        // 2. Reject all other pending offers
+        await db.rejectOtherOffers(offer.listingId, input.id);
+      }
+
       return { success: true };
     }),
 

@@ -53,3 +53,10 @@
 - [x] Fix: Use real Redfin property photos instead of AI-generated images
 - [x] Fix: Re-scrape accurate Zillow stats for 39851 Paseo Chaparro, Murrieta
 - [x] Update seed data with corrected photo URLs and stats
+- [x] Edit listing modal — agents can update price, status, property details, description after creation
+- [x] Offer acceptance workflow — mark offer as Accepted → auto-update listing to "Under Contract" → confirmation dialog
+- [ ] Adjustable closing cost percentage per listing (currently hardcoded at 8%)
+- [x] Edit listing button on listing detail page hero card
+- [x] Confirmation dialog before accepting an offer (irreversible action)
+- [x] When offer accepted, reject all other pending offers automatically
+- [ ] Tests for edit listing and offer acceptance workflow
