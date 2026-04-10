@@ -24,9 +24,10 @@ import {
   Circle,
   ArrowUpRight,
   Sparkles,
+  LandPlot,
 } from "lucide-react";
 import { useLocation } from "wouter";
-import { STAGE_LABELS } from "../../../shared/checklistTemplate";
+import { STAGE_LABELS, STAGE_ORDER } from "../../../shared/checklistTemplate";
 
 const MINT = "#6db08a";
 
@@ -88,19 +89,17 @@ export default function Home() {
           <Skeleton className="h-8 w-48" />
           <Skeleton className="h-10 w-36" />
         </div>
-        <div className="grid grid-cols-4 grid-rows-3 gap-4 h-[600px]">
-          <Skeleton className="col-span-2 row-span-2 rounded-2xl" />
-          <Skeleton className="rounded-2xl" />
-          <Skeleton className="rounded-2xl" />
-          <Skeleton className="rounded-2xl" />
-          <Skeleton className="rounded-2xl" />
-          <Skeleton className="col-span-2 rounded-2xl" />
+        <div className="grid grid-cols-4 gap-3">
+          <Skeleton className="col-span-2 h-48 rounded-2xl" />
+          <Skeleton className="h-24 rounded-2xl" />
+          <Skeleton className="h-24 rounded-2xl" />
+          <Skeleton className="h-24 rounded-2xl" />
+          <Skeleton className="h-24 rounded-2xl" />
         </div>
       </div>
     );
   }
 
-  // If there are listings, show bento dashboard for first listing (or selected)
   const hasListings = listings && listings.length > 0;
 
   return (
@@ -208,115 +207,102 @@ function BentoDashboard({
   const checklistPct = stats?.checklistProgress?.percentage || 0;
   const checklistCompleted = stats?.checklistProgress?.completed || 0;
   const checklistTotal = stats?.checklistProgress?.total || 0;
+  const stages = (stats as any)?.checklistProgress?.stages || [];
 
   return (
-    <div className="grid grid-cols-12 gap-3 auto-rows-[minmax(0,1fr)]">
-      {/* ═══ ROW 1 ═══ */}
+    <div className="grid grid-cols-12 gap-3">
+      {/* ═══ ROW 1: Hero + KPIs ═══ */}
 
-      {/* Listing Hero Card - spans 5 cols, 2 rows */}
+      {/* Listing Hero Card with Photo */}
       <div
-        className="col-span-12 lg:col-span-5 row-span-2 rounded-2xl border border-border/60 bg-card p-6 flex flex-col cursor-pointer group hover:shadow-lg hover:border-[#6db08a]/30 transition-all duration-300"
+        className="col-span-12 lg:col-span-5 rounded-2xl border border-border/60 bg-card overflow-hidden cursor-pointer group hover:shadow-lg hover:border-[#6db08a]/30 transition-all duration-300"
         onClick={onNavigate}
       >
-        <div>
-          <div className="flex items-start justify-between mb-4">
-            <Badge
-              variant="secondary"
-              className={`text-xs font-medium border ${STATUS_COLORS[listing.status] || "bg-gray-100 text-gray-600"}`}
-            >
-              {STATUS_LABELS[listing.status] || listing.status}
-            </Badge>
-            <div className="h-8 w-8 rounded-full bg-[#6db08a]/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <ArrowUpRight className="h-4 w-4 text-[#6db08a]" />
+        {/* Property Photo */}
+        {listing.photoUrl && (
+          <div className="relative h-40 overflow-hidden">
+            <img
+              src={listing.photoUrl}
+              alt={listing.address}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+            <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
+              <Badge
+                variant="secondary"
+                className={`text-xs font-medium border backdrop-blur-sm ${STATUS_COLORS[listing.status] || "bg-gray-100 text-gray-600"}`}
+              >
+                {STATUS_LABELS[listing.status] || listing.status}
+              </Badge>
+              <div className="h-7 w-7 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <ArrowUpRight className="h-3.5 w-3.5 text-white" />
+              </div>
             </div>
           </div>
+        )}
 
-          <h2 className="text-xl font-semibold text-foreground leading-tight mb-1 group-hover:text-[#6db08a] transition-colors">
+        <div className="p-5">
+          {/* No photo fallback badge */}
+          {!listing.photoUrl && (
+            <div className="flex items-start justify-between mb-3">
+              <Badge
+                variant="secondary"
+                className={`text-xs font-medium border ${STATUS_COLORS[listing.status] || "bg-gray-100 text-gray-600"}`}
+              >
+                {STATUS_LABELS[listing.status] || listing.status}
+              </Badge>
+              <div className="h-7 w-7 rounded-full bg-[#6db08a]/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <ArrowUpRight className="h-3.5 w-3.5 text-[#6db08a]" />
+              </div>
+            </div>
+          )}
+
+          <h2 className="text-lg font-semibold text-foreground leading-tight mb-0.5 group-hover:text-[#6db08a] transition-colors">
             {listing.address}
           </h2>
-          <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-            <MapPin className="h-3.5 w-3.5" />
+          <p className="text-xs text-muted-foreground flex items-center gap-1">
+            <MapPin className="h-3 w-3" />
             {[listing.city, listing.state, listing.zipCode].filter(Boolean).join(", ")}
           </p>
 
-          <div className="text-3xl font-bold text-foreground mt-5 tracking-tight">
+          <div className="text-2xl font-bold text-foreground mt-3 tracking-tight">
             {formatPrice(listing.listPrice)}
           </div>
-
           {listing.mlsNumber && (
-            <p className="text-xs text-muted-foreground mt-1.5">MLS# {listing.mlsNumber}</p>
+            <p className="text-[10px] text-muted-foreground mt-0.5">MLS# {listing.mlsNumber}</p>
           )}
-        </div>
 
-        {/* Client info */}
-        {listing.clientName && (
-          <div className="mt-5 pt-4 border-t border-border/50">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Seller</p>
-            <p className="text-sm font-medium text-foreground">{listing.clientName}</p>
-            {listing.clientEmail && (
-              <p className="text-xs text-muted-foreground mt-0.5">{listing.clientEmail}</p>
+          {/* Property specs row */}
+          <div className="flex items-center gap-4 mt-3 pt-3 border-t border-border/40">
+            {listing.bedrooms && (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Bed className="h-3.5 w-3.5" />
+                <span className="font-medium text-foreground">{listing.bedrooms}</span> bd
+              </div>
+            )}
+            {listing.bathrooms && (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Bath className="h-3.5 w-3.5" />
+                <span className="font-medium text-foreground">{listing.bathrooms}</span> ba
+              </div>
+            )}
+            {listing.sqft && (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Ruler className="h-3.5 w-3.5" />
+                <span className="font-medium text-foreground">{listing.sqft.toLocaleString()}</span> sqft
+              </div>
+            )}
+            {listing.lotSizeSqft && (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <LandPlot className="h-3.5 w-3.5" />
+                <span className="font-medium text-foreground">{listing.lotSizeSqft.toLocaleString()}</span> lot
+              </div>
             )}
           </div>
-        )}
-
-        {/* Property type & year */}
-        {(listing.propertyType || listing.yearBuilt) && (
-          <div className="mt-4 flex items-center gap-4">
-            {listing.propertyType && (
-              <div className="px-2.5 py-1 rounded-md bg-muted/50 text-xs text-muted-foreground">
-                {listing.propertyType}
-              </div>
-            )}
-            {listing.yearBuilt && (
-              <div className="px-2.5 py-1 rounded-md bg-muted/50 text-xs text-muted-foreground">
-                Built {listing.yearBuilt}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Property specs */}
-        <div className="flex items-center gap-5 mt-6 pt-5 border-t border-border/50">
-          {listing.bedrooms && (
-            <div className="flex items-center gap-2">
-              <Bed className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm font-semibold text-foreground">{listing.bedrooms}</p>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Beds</p>
-              </div>
-            </div>
-          )}
-          {listing.bathrooms && (
-            <div className="flex items-center gap-2">
-              <Bath className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm font-semibold text-foreground">{listing.bathrooms}</p>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Baths</p>
-              </div>
-            </div>
-          )}
-          {listing.sqft && (
-            <div className="flex items-center gap-2">
-              <Ruler className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm font-semibold text-foreground">{listing.sqft.toLocaleString()}</p>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Sqft</p>
-              </div>
-            </div>
-          )}
-          {listing.listDate && (
-            <div className="flex items-center gap-2 ml-auto">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm font-semibold text-foreground">{daysOnMarket}</p>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Days</p>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
-      {/* Views KPI */}
+      {/* KPI Cards - 7 cols, 2 rows of 3-4 each */}
       <BentoKPI
         icon={Eye}
         label="Total Views"
@@ -324,10 +310,8 @@ function BentoDashboard({
         sublabel="Redfin + Zillow"
         color="#3B82F6"
         bgColor="#EFF6FF"
-        className="col-span-6 sm:col-span-4 lg:col-span-2"
+        className="col-span-4 lg:col-span-2"
       />
-
-      {/* Saves KPI */}
       <BentoKPI
         icon={Heart}
         label="Saves"
@@ -335,21 +319,17 @@ function BentoDashboard({
         sublabel="Favorites"
         color="#F43F5E"
         bgColor="#FFF1F2"
-        className="col-span-6 sm:col-span-4 lg:col-span-2"
+        className="col-span-4 lg:col-span-2"
       />
-
-      {/* Showings KPI */}
       <BentoKPI
         icon={Users}
         label="Showings"
         value={stats?.showingsCount?.toString() || "0"}
-        sublabel="Total scheduled"
+        sublabel="Total"
         color="#7C3AED"
         bgColor="#F5F3FF"
-        className="col-span-6 sm:col-span-4 lg:col-span-3"
+        className="col-span-4 lg:col-span-3"
       />
-
-      {/* Offers KPI */}
       <BentoKPI
         icon={FileText}
         label="Offers"
@@ -357,10 +337,8 @@ function BentoDashboard({
         sublabel="Received"
         color="#D97706"
         bgColor="#FFFBEB"
-        className="col-span-6 sm:col-span-4 lg:col-span-2"
+        className="col-span-4 lg:col-span-2"
       />
-
-      {/* High Interest */}
       <BentoKPI
         icon={TrendingUp}
         label="High Interest"
@@ -368,10 +346,8 @@ function BentoDashboard({
         sublabel="Buyers"
         color="#6db08a"
         bgColor="#e8f5ee"
-        className="col-span-6 sm:col-span-4 lg:col-span-2"
+        className="col-span-4 lg:col-span-2"
       />
-
-      {/* Days on Market */}
       <BentoKPI
         icon={Clock}
         label="Days on Market"
@@ -379,71 +355,80 @@ function BentoDashboard({
         sublabel={listing.listDate ? `Since ${new Date(listing.listDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}` : "Not listed"}
         color="#64748B"
         bgColor="#F1F5F9"
-        className="col-span-6 sm:col-span-4 lg:col-span-3"
+        className="col-span-4 lg:col-span-3"
       />
 
-      {/* ═══ ROW 3 ═══ */}
+      {/* ═══ ROW 3: Checklist + Quick Actions ═══ */}
 
-      {/* Checklist Progress - wide card */}
+      {/* Checklist Progress with per-stage bars */}
       <div className="col-span-12 lg:col-span-7 rounded-2xl border border-border/60 bg-card p-5 cursor-pointer hover:shadow-lg hover:border-[#6db08a]/30 transition-all duration-300" onClick={onNavigate}>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-xl bg-[#6db08a]/10 flex items-center justify-center">
-              <CheckCircle2 className="h-4.5 w-4.5 text-[#6db08a]" />
+            <div className="h-8 w-8 rounded-xl bg-[#6db08a]/10 flex items-center justify-center">
+              <CheckCircle2 className="h-4 w-4 text-[#6db08a]" />
             </div>
             <div>
               <h3 className="text-sm font-semibold text-foreground">Checklist Progress</h3>
-              <p className="text-xs text-muted-foreground">{checklistCompleted} of {checklistTotal} items complete</p>
+              <p className="text-[11px] text-muted-foreground">{checklistCompleted} of {checklistTotal} items complete</p>
             </div>
           </div>
-          <div className="text-right">
-            <span className="text-2xl font-bold text-foreground">{checklistPct}%</span>
-          </div>
+          <span className="text-2xl font-bold text-foreground">{checklistPct}%</span>
         </div>
 
+        {/* Overall progress bar */}
         <Progress value={checklistPct} className="h-2 mb-4" />
 
-        {/* Stage pills */}
-        <div className="flex flex-wrap gap-2">
-          {(stats as any)?.checklistProgress?.stages?.map((stage: any) => (
-            <div
-              key={stage.name}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors"
-              style={{
-                backgroundColor: stage.percentage === 100
-                  ? "#e8f5ee"
-                  : stage.percentage > 0
-                    ? "rgba(109,176,138,0.08)"
-                    : "#f1f5f9",
-                color: stage.percentage > 0 ? "#6db08a" : "#94a3b8",
-              }}
-            >
-              {stage.percentage === 100 ? (
-                <CheckCircle2 className="h-3 w-3" />
-              ) : (
-                <Circle className="h-3 w-3" />
-              )}
-              {(STAGE_LABELS as any)[stage.name] || stage.name}
-            </div>
-          )) || (
+        {/* Per-stage progress bars */}
+        <div className="space-y-2">
+          {stages.length > 0 ? (
+            stages.map((stage: any) => {
+              const label = (STAGE_LABELS as any)[stage.name] || stage.name;
+              return (
+                <div key={stage.name} className="flex items-center gap-3">
+                  <div className="w-[140px] flex items-center gap-1.5 shrink-0">
+                    {stage.percentage === 100 ? (
+                      <CheckCircle2 className="h-3 w-3 text-[#6db08a] shrink-0" />
+                    ) : (
+                      <Circle className="h-3 w-3 text-muted-foreground/40 shrink-0" />
+                    )}
+                    <span className={`text-[11px] truncate ${stage.percentage === 100 ? "text-[#6db08a] font-medium" : "text-muted-foreground"}`}>
+                      {label}
+                    </span>
+                  </div>
+                  <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${stage.percentage}%`,
+                        backgroundColor: stage.percentage === 100 ? "#6db08a" : stage.percentage > 0 ? "#6db08a80" : "transparent",
+                      }}
+                    />
+                  </div>
+                  <span className={`text-[10px] w-8 text-right tabular-nums ${stage.percentage === 100 ? "text-[#6db08a] font-medium" : "text-muted-foreground"}`}>
+                    {stage.percentage}%
+                  </span>
+                </div>
+              );
+            })
+          ) : (
             <p className="text-xs text-muted-foreground">Loading stages...</p>
           )}
         </div>
       </div>
 
-      {/* Quick Actions / Activity Card */}
+      {/* Quick Actions */}
       <div className="col-span-12 lg:col-span-5 rounded-2xl border border-border/60 bg-card p-5">
-        <div className="flex items-center gap-2.5 mb-4">
-          <div className="h-9 w-9 rounded-xl bg-[#6db08a]/10 flex items-center justify-center">
-            <Sparkles className="h-4.5 w-4.5 text-[#6db08a]" />
+        <div className="flex items-center gap-2.5 mb-3">
+          <div className="h-8 w-8 rounded-xl bg-[#6db08a]/10 flex items-center justify-center">
+            <Sparkles className="h-4 w-4 text-[#6db08a]" />
           </div>
           <div>
             <h3 className="text-sm font-semibold text-foreground">Quick Actions</h3>
-            <p className="text-xs text-muted-foreground">Manage this listing</p>
+            <p className="text-[11px] text-muted-foreground">Manage this listing</p>
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           {[
             { label: "View Full Details", desc: "Checklist, insights & more", action: onNavigate },
             { label: "Record a Showing", desc: "Log buyer agent feedback", action: onNavigate },
@@ -453,13 +438,13 @@ function BentoDashboard({
             <button
               key={item.label}
               onClick={item.action}
-              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-[#6db08a]/5 transition-colors group text-left"
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#6db08a]/5 transition-colors group/btn text-left"
             >
               <div>
-                <p className="text-sm font-medium text-foreground group-hover:text-[#6db08a] transition-colors">{item.label}</p>
-                <p className="text-xs text-muted-foreground">{item.desc}</p>
+                <p className="text-sm font-medium text-foreground group-hover/btn:text-[#6db08a] transition-colors">{item.label}</p>
+                <p className="text-[11px] text-muted-foreground">{item.desc}</p>
               </div>
-              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-[#6db08a] transition-colors" />
+              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover/btn:text-[#6db08a] transition-colors" />
             </button>
           ))}
         </div>
@@ -486,19 +471,17 @@ function BentoKPI({
   className?: string;
 }) {
   return (
-    <div className={`${className} rounded-2xl border border-border/60 bg-card p-4 flex flex-col justify-between hover:shadow-md hover:border-border transition-all duration-200`}>
-      <div className="flex items-center justify-between mb-3">
-        <div
-          className="h-9 w-9 rounded-xl flex items-center justify-center"
-          style={{ backgroundColor: bgColor }}
-        >
-          <Icon className="h-4 w-4" style={{ color }} />
-        </div>
+    <div className={`${className} rounded-2xl border border-border/60 bg-card p-3.5 flex flex-col justify-between hover:shadow-md hover:border-border transition-all duration-200`}>
+      <div
+        className="h-8 w-8 rounded-lg flex items-center justify-center mb-2"
+        style={{ backgroundColor: bgColor }}
+      >
+        <Icon className="h-3.5 w-3.5" style={{ color }} />
       </div>
       <div>
-        <p className="text-2xl font-bold text-foreground tracking-tight">{value}</p>
-        <p className="text-xs font-medium text-muted-foreground mt-0.5">{label}</p>
-        <p className="text-[10px] text-muted-foreground/70 mt-0.5">{sublabel}</p>
+        <p className="text-xl font-bold text-foreground tracking-tight leading-none">{value}</p>
+        <p className="text-[11px] font-medium text-muted-foreground mt-1">{label}</p>
+        <p className="text-[10px] text-muted-foreground/60">{sublabel}</p>
       </div>
     </div>
   );

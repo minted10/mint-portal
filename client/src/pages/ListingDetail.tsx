@@ -223,7 +223,7 @@ export default function ListingDetail({ id }: { id: number }) {
           <ShowingsTab listingId={id} readOnly={isClient} />
         </TabsContent>
         <TabsContent value="offers">
-          <OffersTab listingId={id} readOnly={isClient} />
+          <OffersTab listingId={id} readOnly={isClient} listPrice={listing?.listPrice} />
         </TabsContent>
         <TabsContent value="marketing">
           <MarketingTab listingId={id} readOnly={isClient} />

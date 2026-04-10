@@ -489,7 +489,10 @@ const seedRouter = router({
     // Check if test listing already exists
     const existing = await db.getListingsByAgent(ctx.user.id);
     const testExists = existing.find(l => l.address === "26582 Paseo Callado");
-    if (testExists) return { id: testExists.id, message: "Test listing already exists" };
+    if (testExists) {
+      // Delete existing test listing so we can re-seed with updated data
+      await db.deleteListing(testExists.id);
+    }
 
     const listingId = await db.createListing({
       agentId: ctx.user.id,
@@ -511,6 +514,7 @@ const seedRouter = router({
       status: "active" as any,
       listDate: new Date("2026-03-15"),
       description: "Stunning Spanish-style home in the heart of San Juan Capistrano. This beautifully upgraded 4-bedroom, 3.5-bathroom residence features an open floor plan with soaring ceilings, gourmet kitchen with quartz countertops and premium appliances, and a luxurious primary suite with spa-like bathroom. The private backyard offers a resort-style pool, built-in BBQ, and panoramic hillside views. Located in a quiet cul-de-sac near top-rated schools, hiking trails, and the historic Mission district.",
+      photoUrl: "https://d2xsxph8kpxj0f.cloudfront.net/310519663506091484/YnEeEYz8JCEZbD4t8BzqPW/property-hero-26582_9e383239.jpg",
     });
 
     await db.initializeChecklistForListing(listingId);
@@ -617,14 +621,69 @@ const seedRouter = router({
       offerStatus: "pending" as any,
     });
 
-    // Update property insights with sample data
+    // Add 2 more offers (total 4)
+    await db.createOffer({
+      listingId,
+      agentName: "Sarah Williams",
+      company: "eXp Realty",
+      buyerName: "James & Priya Patel",
+      offerPrice: "1850000.00",
+      escrowPeriod: "45 days",
+      emdAmount: "37000.00",
+      emdPercent: "2.00",
+      loanType: "FHA",
+      downPayment: "185000.00",
+      loanPercent: "90.00",
+      loanAmount: "1665000.00",
+      preapprovalLetter: "Yes" as any,
+      proofOfFunds: "Pending" as any,
+      inspectionContingency: "17 days",
+      appraisalContingency: "21 days",
+      loanContingency: "30 days",
+      escrowCompany: "Pacific Premier Escrow",
+      titleCompany: "Fidelity National Title",
+      homeWarrantyCompany: "First American Home Warranty",
+      homeWarrantyAmount: "550.00",
+      homeToSell: "Yes" as any,
+      notes: "Relocating from Bay Area. Contingent on selling their Sunnyvale home (currently in escrow, closing in 3 weeks). Strong income, pre-approved with Wells Fargo.",
+      offerStatus: "pending" as any,
+    });
+
+    await db.createOffer({
+      listingId,
+      agentName: "Jennifer Park",
+      company: "Coldwell Banker",
+      buyerName: "David & Christine Nguyen",
+      offerPrice: "1910000.00",
+      escrowPeriod: "25 days",
+      emdAmount: "95500.00",
+      emdPercent: "5.00",
+      loanType: "Conventional",
+      downPayment: "573000.00",
+      loanPercent: "70.00",
+      loanAmount: "1337000.00",
+      preapprovalLetter: "Yes" as any,
+      proofOfFunds: "Yes" as any,
+      inspectionContingency: "12 days",
+      appraisalContingency: "Waived",
+      loanContingency: "17 days",
+      escrowCompany: "Mariners Escrow",
+      titleCompany: "Old Republic Title",
+      homeWarrantyCompany: "American Home Shield",
+      homeWarrantyAmount: "625.00",
+      homeToSell: "No" as any,
+      notes: "Very motivated buyers. 30% down, waiving appraisal contingency. Currently renting nearby. Kids attend local schools. Flexible on close date but prefer quick.",
+      offerStatus: "pending" as any,
+    });
+
+    // Update property insights with REAL scraped data from Redfin & Zillow
     await db.updatePropertyInsights(listingId, {
-      redfin_views: 1247,
-      zillow_views: 2831,
-      redfin_saves: 89,
-      zillow_saves: 156,
+      redfin_views: 1039,
+      zillow_views: 2200,
+      redfin_saves: 46,
+      zillow_saves: 90,
       totalShowings: 7,
-      totalOffers: 2,
+      totalOffers: 4,
       openHouseDates: JSON.stringify(["2026-03-16", "2026-03-23"]),
       priceHistory: JSON.stringify([
         { date: "2026-03-15", price: 1895000, event: "Listed" },

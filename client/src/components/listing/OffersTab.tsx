@@ -45,7 +45,7 @@ function formatPrice(price: string | null | undefined): string {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(num);
 }
 
-export default function OffersTab({ listingId, readOnly }: { listingId: number; readOnly: boolean }) {
+export default function OffersTab({ listingId, readOnly, listPrice }: { listingId: number; readOnly: boolean; listPrice?: string | null }) {
   const { data: offers, isLoading } = trpc.offer.list.useQuery({ listingId });
   const utils = trpc.useUtils();
   const [open, setOpen] = useState(false);
@@ -241,7 +241,7 @@ export default function OffersTab({ listingId, readOnly }: { listingId: number; 
           </CardContent>
         </Card>
       ) : viewMode === "compare" && hasMultipleOffers ? (
-        <OfferComparisonView offers={offers} readOnly={readOnly} updateMutation={updateMutation} deleteMutation={deleteMutation} />
+        <OfferComparisonView offers={offers} readOnly={readOnly} updateMutation={updateMutation} deleteMutation={deleteMutation} listPrice={listPrice} />
       ) : (
         <Accordion type="multiple" defaultValue={offers.map(o => String(o.id))} className="space-y-2">
           {offers.map((offer) => (
@@ -318,23 +318,41 @@ export default function OffersTab({ listingId, readOnly }: { listingId: number; 
 }
 
 /* ─── Offer Comparison View ─── */
-function OfferComparisonView({ offers, readOnly, updateMutation, deleteMutation }: {
+function OfferComparisonView({ offers, readOnly, updateMutation, deleteMutation, listPrice }: {
   offers: any[];
   readOnly: boolean;
   updateMutation: any;
   deleteMutation: any;
+  listPrice?: string | null;
 }) {
   // Find highest offer price for highlighting
   const prices = offers.map(o => parseFloat(o.offerPrice || "0")).filter(n => !isNaN(n));
   const highestPrice = Math.max(...prices);
 
+  // Seller net calculation helper
+  // Standard CA closing costs: ~1% title/escrow, ~0.5% transfer tax, ~2.5% agent commissions (listing side)
+  // Total estimated seller costs: ~8% of sale price (conservative)
+  const SELLER_COST_RATE = 0.08;
+  function calcSellerNet(offer: any): number {
+    const price = parseFloat(offer.offerPrice || "0");
+    if (isNaN(price) || price === 0) return 0;
+    const warranty = parseFloat(offer.homeWarrantyAmount || "0") || 0;
+    const closingCosts = price * SELLER_COST_RATE;
+    return price - closingCosts - warranty;
+  }
+  const sellerNets = offers.map(calcSellerNet);
+  const highestNet = Math.max(...sellerNets.filter(n => n > 0));
+
   // Comparison rows definition
-  const rows: { label: string; section: string; getValue: (o: any) => string; highlight?: "highest-price" | "yes-is-good" | "no-is-good" | "lowest-is-good" }[] = [
+  const rows: { label: string; section: string; getValue: (o: any) => string; highlight?: "highest-price" | "yes-is-good" | "no-is-good" | "lowest-is-good" | "highest-net" }[] = [
     { label: "Buyer", section: "Buyer Info", getValue: o => o.buyerName || "—" },
     { label: "Agent", section: "Buyer Info", getValue: o => o.agentName || "—" },
     { label: "Brokerage", section: "Buyer Info", getValue: o => o.company || "—" },
     { label: "Status", section: "Buyer Info", getValue: o => o.offerStatus || "—" },
     { label: "Offer Price", section: "Financial", getValue: o => formatPrice(o.offerPrice), highlight: "highest-price" },
+    { label: "Est. Closing Costs (8%)", section: "Financial", getValue: o => { const p = parseFloat(o.offerPrice || "0"); return isNaN(p) || p === 0 ? "—" : formatPrice(String(Math.round(p * SELLER_COST_RATE))); } },
+    { label: "Home Warranty Cost", section: "Financial", getValue: o => formatPrice(o.homeWarrantyAmount) },
+    { label: "Est. Seller Net", section: "Financial", getValue: o => { const net = calcSellerNet(o); return net > 0 ? formatPrice(String(Math.round(net))) : "—"; }, highlight: "highest-net" },
     { label: "Escrow Period", section: "Financial", getValue: o => o.escrowPeriod || "—", highlight: "lowest-is-good" },
     { label: "EMD Amount", section: "Financial", getValue: o => o.emdAmount ? `${formatPrice(o.emdAmount)} (${o.emdPercent || "—"}%)` : "—" },
     { label: "Loan Type", section: "Financial", getValue: o => o.loanType || "—" },
@@ -348,8 +366,7 @@ function OfferComparisonView({ offers, readOnly, updateMutation, deleteMutation 
     { label: "Loan Contingency", section: "Contingencies", getValue: o => o.loanContingency || "—", highlight: "lowest-is-good" },
     { label: "Escrow Co.", section: "Service Providers", getValue: o => o.escrowCompany || "—" },
     { label: "Title Co.", section: "Service Providers", getValue: o => o.titleCompany || "—" },
-    { label: "Home Warranty", section: "Service Providers", getValue: o => o.homeWarrantyCompany || "—" },
-    { label: "Warranty Amt", section: "Service Providers", getValue: o => formatPrice(o.homeWarrantyAmount) },
+    { label: "Home Warranty Co.", section: "Service Providers", getValue: o => o.homeWarrantyCompany || "—" },
     { label: "Notes", section: "Other", getValue: o => o.notes || "—" },
   ];
 
@@ -382,6 +399,10 @@ function OfferComparisonView({ offers, readOnly, updateMutation, deleteMutation 
         if (isNaN(myNum)) return "";
         const minNum = Math.min(...nums);
         return myNum === minNum ? "bg-emerald-50 text-emerald-700" : "";
+      }
+      case "highest-net": {
+        const net = calcSellerNet(offer);
+        return net === highestNet && highestNet > 0 ? "bg-emerald-50 text-emerald-700 font-bold text-base" : "";
       }
       default:
         return "";
@@ -427,7 +448,7 @@ function OfferComparisonView({ offers, readOnly, updateMutation, deleteMutation 
                   </tr>
                   {sectionRows.map((row) => (
                     <tr key={row.label} className="border-b border-border/40 hover:bg-muted/10">
-                      <td className="p-3 text-muted-foreground font-medium sticky left-0 bg-background z-10">
+                      <td className={`p-3 font-medium sticky left-0 bg-background z-10 ${row.label === "Est. Seller Net" ? "text-foreground font-bold" : "text-muted-foreground"}`}>
                         {row.label}
                       </td>
                       {offers.map((offer) => (

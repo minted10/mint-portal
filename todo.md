@@ -28,3 +28,9 @@
 - [x] Update brand color from #6DB48E to #6db08a across all files
 - [x] Redesign dashboard with bento box grid layout
 - [x] Update DashboardLayout sidebar with actual logo
+- [x] Reduce bento box card heights on dashboard (less stretched vertically)
+- [x] Add seller net calculation to side-by-side offer comparison
+- [x] Add per-stage progress bars within the checklist card on dashboard
+- [x] Scrape Redfin and Zillow for actual property data (views, saves) for test listing
+- [x] Pull property photo from Redfin/Zillow and add to dashboard
+- [x] Add 2 more test offers to the seed data (total 4 offers now)
