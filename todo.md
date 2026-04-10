@@ -15,7 +15,7 @@
 - [x] Property insights dashboard: views, saves, showings count, offers count, open houses, days on market, price history
 - [x] Showing log: date, buyer agent, brokerage, interest level (Not Responsive/No Interest/Low/High), feedback
 - [x] Offer tracking form matching Offer Sheet: agent, company, buyer name, offer price, escrow period, EMD, loan type, down payment, contingencies, escrow/title/warranty companies, notes
-- [ ] Offer comparison view for side-by-side analysis (future enhancement)
+- [x] Offer comparison view for side-by-side analysis
 - [x] Marketing links section: Marketing Calendar, Google Drive Folder, Photos Folder, Video, Matterport, Property Website
 - [x] Client read-only portal showing listing stats, checklist progress, showing summary, offer status
 - [x] Clients management page with invitation system

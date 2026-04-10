@@ -26,8 +26,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Plus, Trash2, DollarSign, User, Building2, FileText, Shield, Home } from "lucide-react";
-import { useState } from "react";
+import { Plus, Trash2, FileText, Columns3, List } from "lucide-react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -49,6 +49,7 @@ export default function OffersTab({ listingId, readOnly }: { listingId: number; 
   const { data: offers, isLoading } = trpc.offer.list.useQuery({ listingId });
   const utils = trpc.useUtils();
   const [open, setOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<"list" | "compare">("list");
 
   const emptyForm = {
     agentName: "", company: "", buyerName: "", offerPrice: "", escrowPeriod: "",
@@ -96,10 +97,37 @@ export default function OffersTab({ listingId, readOnly }: { listingId: number; 
 
   if (isLoading) return <Skeleton className="h-64 rounded-xl" />;
 
+  const hasMultipleOffers = offers && offers.length >= 2;
+
   return (
     <div className="space-y-4">
-      {!readOnly && (
-        <div className="flex justify-end">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        {/* View mode toggle */}
+        {hasMultipleOffers && (
+          <div className="flex items-center gap-1 bg-muted rounded-lg p-0.5">
+            <Button
+              variant={viewMode === "list" ? "default" : "ghost"}
+              size="sm"
+              className={`h-7 px-3 text-xs gap-1.5 ${viewMode === "list" ? "bg-primary text-white hover:bg-mint-dark" : ""}`}
+              onClick={() => setViewMode("list")}
+            >
+              <List className="h-3.5 w-3.5" />
+              List
+            </Button>
+            <Button
+              variant={viewMode === "compare" ? "default" : "ghost"}
+              size="sm"
+              className={`h-7 px-3 text-xs gap-1.5 ${viewMode === "compare" ? "bg-primary text-white hover:bg-mint-dark" : ""}`}
+              onClick={() => setViewMode("compare")}
+            >
+              <Columns3 className="h-3.5 w-3.5" />
+              Compare
+            </Button>
+          </div>
+        )}
+        {!hasMultipleOffers && <div />}
+
+        {!readOnly && (
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button className="bg-primary hover:bg-mint-dark text-white gap-2" size="sm">
@@ -202,8 +230,8 @@ export default function OffersTab({ listingId, readOnly }: { listingId: number; 
               </form>
             </DialogContent>
           </Dialog>
-        </div>
-      )}
+        )}
+      </div>
 
       {!offers || offers.length === 0 ? (
         <Card className="border-dashed">
@@ -212,6 +240,8 @@ export default function OffersTab({ listingId, readOnly }: { listingId: number; 
             <p>No offers received yet.</p>
           </CardContent>
         </Card>
+      ) : viewMode === "compare" && hasMultipleOffers ? (
+        <OfferComparisonView offers={offers} readOnly={readOnly} updateMutation={updateMutation} deleteMutation={deleteMutation} />
       ) : (
         <Accordion type="multiple" defaultValue={offers.map(o => String(o.id))} className="space-y-2">
           {offers.map((offer) => (
@@ -284,6 +314,160 @@ export default function OffersTab({ listingId, readOnly }: { listingId: number; 
         </Accordion>
       )}
     </div>
+  );
+}
+
+/* ─── Offer Comparison View ─── */
+function OfferComparisonView({ offers, readOnly, updateMutation, deleteMutation }: {
+  offers: any[];
+  readOnly: boolean;
+  updateMutation: any;
+  deleteMutation: any;
+}) {
+  // Find highest offer price for highlighting
+  const prices = offers.map(o => parseFloat(o.offerPrice || "0")).filter(n => !isNaN(n));
+  const highestPrice = Math.max(...prices);
+
+  // Comparison rows definition
+  const rows: { label: string; section: string; getValue: (o: any) => string; highlight?: "highest-price" | "yes-is-good" | "no-is-good" | "lowest-is-good" }[] = [
+    { label: "Buyer", section: "Buyer Info", getValue: o => o.buyerName || "—" },
+    { label: "Agent", section: "Buyer Info", getValue: o => o.agentName || "—" },
+    { label: "Brokerage", section: "Buyer Info", getValue: o => o.company || "—" },
+    { label: "Status", section: "Buyer Info", getValue: o => o.offerStatus || "—" },
+    { label: "Offer Price", section: "Financial", getValue: o => formatPrice(o.offerPrice), highlight: "highest-price" },
+    { label: "Escrow Period", section: "Financial", getValue: o => o.escrowPeriod || "—", highlight: "lowest-is-good" },
+    { label: "EMD Amount", section: "Financial", getValue: o => o.emdAmount ? `${formatPrice(o.emdAmount)} (${o.emdPercent || "—"}%)` : "—" },
+    { label: "Loan Type", section: "Financial", getValue: o => o.loanType || "—" },
+    { label: "Down Payment", section: "Financial", getValue: o => o.downPayment ? `${formatPrice(o.downPayment)} (${o.loanPercent || "—"}%)` : "—" },
+    { label: "Loan Amount", section: "Financial", getValue: o => formatPrice(o.loanAmount) },
+    { label: "Pre-Approval", section: "Verification", getValue: o => o.preapprovalLetter || "—", highlight: "yes-is-good" },
+    { label: "Proof of Funds", section: "Verification", getValue: o => o.proofOfFunds || "—", highlight: "yes-is-good" },
+    { label: "Home to Sell", section: "Verification", getValue: o => o.homeToSell || "—", highlight: "no-is-good" },
+    { label: "Inspection", section: "Contingencies", getValue: o => o.inspectionContingency || "—", highlight: "lowest-is-good" },
+    { label: "Appraisal", section: "Contingencies", getValue: o => o.appraisalContingency || "—", highlight: "lowest-is-good" },
+    { label: "Loan Contingency", section: "Contingencies", getValue: o => o.loanContingency || "—", highlight: "lowest-is-good" },
+    { label: "Escrow Co.", section: "Service Providers", getValue: o => o.escrowCompany || "—" },
+    { label: "Title Co.", section: "Service Providers", getValue: o => o.titleCompany || "—" },
+    { label: "Home Warranty", section: "Service Providers", getValue: o => o.homeWarrantyCompany || "—" },
+    { label: "Warranty Amt", section: "Service Providers", getValue: o => formatPrice(o.homeWarrantyAmount) },
+    { label: "Notes", section: "Other", getValue: o => o.notes || "—" },
+  ];
+
+  // Group rows by section
+  const sections = Array.from(new Set(rows.map(r => r.section)));
+
+  function getCellHighlight(row: typeof rows[0], offer: any): string {
+    if (!row.highlight) return "";
+    const val = row.getValue(offer);
+    if (val === "—") return "";
+
+    switch (row.highlight) {
+      case "highest-price": {
+        const num = parseFloat(offer.offerPrice || "0");
+        return num === highestPrice && highestPrice > 0 ? "bg-emerald-50 text-emerald-700 font-semibold" : "";
+      }
+      case "yes-is-good":
+        return val === "Yes" ? "bg-emerald-50 text-emerald-700" : val === "No" ? "bg-red-50 text-red-600" : "";
+      case "no-is-good":
+        return val === "No" ? "bg-emerald-50 text-emerald-700" : val === "Yes" ? "bg-amber-50 text-amber-700" : "";
+      case "lowest-is-good": {
+        // Extract number from strings like "17 days" or "Waived"
+        if (val.toLowerCase().includes("waiv") || val.toLowerCase() === "n/a") return "bg-emerald-50 text-emerald-700";
+        const nums = offers.map(o => {
+          const v = row.getValue(o);
+          const n = parseInt(v);
+          return isNaN(n) ? Infinity : n;
+        });
+        const myNum = parseInt(val);
+        if (isNaN(myNum)) return "";
+        const minNum = Math.min(...nums);
+        return myNum === minNum ? "bg-emerald-50 text-emerald-700" : "";
+      }
+      default:
+        return "";
+    }
+  }
+
+  return (
+    <Card className="overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b bg-muted/30">
+              <th className="text-left p-3 font-medium text-muted-foreground sticky left-0 bg-muted/30 min-w-[140px] z-10">
+                Field
+              </th>
+              {offers.map((offer) => (
+                <th key={offer.id} className="text-left p-3 min-w-[180px]">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-foreground">{offer.buyerName || "Unknown"}</span>
+                    <Badge variant="secondary" className={`text-[10px] ${STATUS_COLORS[offer.offerStatus] || ""}`}>
+                      {offer.offerStatus}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground font-normal mt-0.5">
+                    {formatPrice(offer.offerPrice)}
+                  </p>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {sections.map((section) => {
+              const sectionRows = rows.filter(r => r.section === section);
+              return (
+                <React.Fragment key={section}>
+                  <tr>
+                    <td
+                      colSpan={offers.length + 1}
+                      className="px-3 py-2 bg-muted/50 text-xs font-semibold text-muted-foreground uppercase tracking-wider"
+                    >
+                      {section}
+                    </td>
+                  </tr>
+                  {sectionRows.map((row) => (
+                    <tr key={row.label} className="border-b border-border/40 hover:bg-muted/10">
+                      <td className="p-3 text-muted-foreground font-medium sticky left-0 bg-background z-10">
+                        {row.label}
+                      </td>
+                      {offers.map((offer) => (
+                        <td key={offer.id} className={`p-3 ${getCellHighlight(row, offer)}`}>
+                          {row.label === "Status" ? (
+                            !readOnly ? (
+                              <Select
+                                value={offer.offerStatus}
+                                onValueChange={(v) => updateMutation.mutate({ id: offer.id, offerStatus: v as any })}
+                              >
+                                <SelectTrigger className="h-7 text-xs w-28"><SelectValue /></SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="pending">Pending</SelectItem>
+                                  <SelectItem value="accepted">Accepted</SelectItem>
+                                  <SelectItem value="countered">Countered</SelectItem>
+                                  <SelectItem value="rejected">Rejected</SelectItem>
+                                  <SelectItem value="withdrawn">Withdrawn</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            ) : (
+                              <Badge variant="secondary" className={`text-xs ${STATUS_COLORS[offer.offerStatus] || ""}`}>
+                                {offer.offerStatus}
+                              </Badge>
+                            )
+                          ) : row.label === "Notes" ? (
+                            <p className="text-xs max-w-[200px] line-clamp-3">{row.getValue(offer)}</p>
+                          ) : (
+                            row.getValue(offer)
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </React.Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </Card>
   );
 }
 
