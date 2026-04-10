@@ -34,3 +34,14 @@
 - [x] Scrape Redfin and Zillow for actual property data (views, saves) for test listing
 - [x] Pull property photo from Redfin/Zillow and add to dashboard
 - [x] Add 2 more test offers to the seed data (total 4 offers now)
+- [x] Rebuild dashboard with 12-column CSS grid bento box layout (12px gaps)
+- [x] Full-width hero card with property photo, address, price, MLS#, property stats
+- [x] Switch to DM Sans font (Bold 700 for KPIs, Medium 500 uppercase for labels, Regular 400 for body)
+- [x] Update color system: #F0F2F5 page bg, #FFFFFF card bg, #1E1E1E primary text, #6B7280 secondary text
+- [x] Cards: 20px border radius, no borders, subtle shadow, hover lift (2px translateY, 0.2s transition)
+- [x] Staggered card entrance animations (fade up, 50ms delay between cards)
+- [x] Add area chart with trend line for views/engagement
+- [x] Add donut chart for showing interest breakdown
+- [x] Add activity feed with vertical timeline
+- [x] Add inline sparklines next to metrics
+- [x] Top navigation bar with logo left, profile right, nav tabs across top

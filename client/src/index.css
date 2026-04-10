@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -58,29 +58,30 @@
   --chart-3: oklch(0.802 0.06 158.2);
   --chart-4: oklch(0.55 0.089 158.2);
   --chart-5: oklch(0.45 0.07 158.2);
-  --radius: 0.625rem;
-  --background: oklch(0.985 0.002 260);
-  --foreground: oklch(0.15 0.005 285);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.005 285);
+  --radius: 1.25rem; /* 20px border radius for cards */
+  /* Updated color system per spec */
+  --background: oklch(0.955 0.005 260); /* #F0F2F5 light stone gray */
+  --foreground: oklch(0.17 0.005 0); /* #1E1E1E charcoal */
+  --card: oklch(1 0 0); /* #FFFFFF white */
+  --card-foreground: oklch(0.17 0.005 0); /* #1E1E1E charcoal */
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.005 285);
+  --popover-foreground: oklch(0.17 0.005 0);
   --secondary: oklch(0.965 0.005 158.2);
   --secondary-foreground: oklch(0.35 0.02 158.2);
-  --muted: oklch(0.965 0.003 285);
-  --muted-foreground: oklch(0.5 0.01 285);
+  --muted: oklch(0.955 0.005 260); /* matches page bg */
+  --muted-foreground: oklch(0.52 0.015 250); /* #6B7280 muted gray */
   --accent: oklch(0.955 0.02 158.2);
   --accent-foreground: oklch(0.25 0.02 158.2);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.925 0.003 285);
-  --input: oklch(0.925 0.003 285);
+  --border: oklch(0.925 0.003 260);
+  --input: oklch(0.925 0.003 260);
   --ring: oklch(0.702 0.089 158.2);
-  --sidebar: oklch(0.99 0.002 158.2);
-  --sidebar-foreground: oklch(0.2 0.005 285);
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.17 0.005 0);
   --sidebar-accent: oklch(0.955 0.02 158.2);
-  --sidebar-accent-foreground: oklch(0.2 0.02 158.2);
-  --sidebar-border: oklch(0.93 0.003 285);
+  --sidebar-accent-foreground: oklch(0.17 0.005 0);
+  --sidebar-border: oklch(0.93 0.003 260);
   --sidebar-ring: oklch(0.702 0.089 158.2);
 }
 
@@ -129,7 +130,60 @@
     .container {
       padding-left: 2rem;
       padding-right: 2rem;
-      max-width: 1280px;
+      max-width: 1440px;
     }
+  }
+
+  /* Bento card base styles */
+  .bento-card {
+    background: white;
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+  }
+  .bento-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+
+  /* Staggered entrance animation */
+  @keyframes bentoFadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .bento-animate {
+    opacity: 0;
+    animation: bentoFadeUp 0.4s ease-out forwards;
+  }
+
+  /* KPI number styling */
+  .kpi-number {
+    font-family: "DM Sans", sans-serif;
+    font-weight: 700;
+    color: #1E1E1E;
+    line-height: 1;
+  }
+  .kpi-label {
+    font-family: "DM Sans", sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6B7280;
+  }
+
+  /* Sparkline container */
+  .sparkline-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 }
