@@ -108,7 +108,7 @@ export default function OffersTab({ listingId, readOnly }: { listingId: number; 
             <Button
               variant={viewMode === "list" ? "default" : "ghost"}
               size="sm"
-              className={`h-7 px-3 text-xs gap-1.5 ${viewMode === "list" ? "bg-primary text-white hover:bg-mint-dark" : ""}`}
+              className={`h-7 px-3 text-xs gap-1.5 ${viewMode === "list" ? "bg-primary text-white hover:bg-[#5a9a75]" : ""}`}
               onClick={() => setViewMode("list")}
             >
               <List className="h-3.5 w-3.5" />
@@ -117,7 +117,7 @@ export default function OffersTab({ listingId, readOnly }: { listingId: number; 
             <Button
               variant={viewMode === "compare" ? "default" : "ghost"}
               size="sm"
-              className={`h-7 px-3 text-xs gap-1.5 ${viewMode === "compare" ? "bg-primary text-white hover:bg-mint-dark" : ""}`}
+              className={`h-7 px-3 text-xs gap-1.5 ${viewMode === "compare" ? "bg-primary text-white hover:bg-[#5a9a75]" : ""}`}
               onClick={() => setViewMode("compare")}
             >
               <Columns3 className="h-3.5 w-3.5" />
@@ -130,7 +130,7 @@ export default function OffersTab({ listingId, readOnly }: { listingId: number; 
         {!readOnly && (
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-primary hover:bg-mint-dark text-white gap-2" size="sm">
+              <Button className="bg-primary hover:bg-[#5a9a75] text-white gap-2" size="sm">
                 <Plus className="h-4 w-4" />
                 Add Offer
               </Button>
@@ -223,7 +223,7 @@ export default function OffersTab({ listingId, readOnly }: { listingId: number; 
                 </div>
                 <div className="flex justify-end gap-3 pt-2">
                   <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-                  <Button type="submit" disabled={createMutation.isPending} className="bg-primary hover:bg-mint-dark text-white">
+                  <Button type="submit" disabled={createMutation.isPending} className="bg-primary hover:bg-[#5a9a75] text-white">
                     {createMutation.isPending ? "Saving..." : "Submit Offer"}
                   </Button>
                 </div>

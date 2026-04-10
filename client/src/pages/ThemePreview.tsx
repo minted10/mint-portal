@@ -53,13 +53,13 @@ const themes: ThemeOption[] = [
     description: "Clean white canvas with mint green accents. Light, airy, and professional — the Apple-inspired default.",
     style: "light",
     colors: {
-      primary: "#6DB48E",
+      primary: "#6db08a",
       primaryLight: "#E8F5EE",
       primaryDark: "#4A9A6E",
       sidebarBg: "#FAFBFA",
       sidebarText: "#64748B",
       sidebarActive: "#E8F5EE",
-      sidebarActiveText: "#6DB48E",
+      sidebarActiveText: "#6db08a",
       pageBg: "#FAFAFA",
       cardBg: "#FFFFFF",
       cardBorder: "#E8ECE9",
@@ -73,7 +73,7 @@ const themes: ThemeOption[] = [
       kpiBg5: "#ECFDF5", kpiText5: "#059669",
       kpiBg6: "#F8FAFC", kpiText6: "#64748B",
       progressBg: "#E8F5EE",
-      progressFill: "#6DB48E",
+      progressFill: "#6db08a",
       badgeBg: "#ECFDF5",
       badgeText: "#059669",
     },
@@ -85,7 +85,7 @@ const themes: ThemeOption[] = [
     description: "Sophisticated dark interface with glowing mint highlights. Reduces eye strain and feels premium and modern.",
     style: "dark",
     colors: {
-      primary: "#6DB48E",
+      primary: "#6db08a",
       primaryLight: "#1A3A2A",
       primaryDark: "#8CCFAA",
       sidebarBg: "#0F1419",
@@ -102,10 +102,10 @@ const themes: ThemeOption[] = [
       kpiBg2: "#2D1B2E", kpiText2: "#FB7185",
       kpiBg3: "#231B3A", kpiText3: "#A78BFA",
       kpiBg4: "#2D2517", kpiText4: "#FBBF24",
-      kpiBg5: "#1A3A2A", kpiText5: "#6DB48E",
+      kpiBg5: "#1A3A2A", kpiText5: "#6db08a",
       kpiBg6: "#1E2A35", kpiText6: "#8899A6",
       progressBg: "#253341",
-      progressFill: "#6DB48E",
+      progressFill: "#6db08a",
       badgeBg: "#1A3A2A",
       badgeText: "#8CCFAA",
     },
@@ -181,7 +181,7 @@ const themes: ThemeOption[] = [
     description: "Near-black backgrounds with crisp white text and mint accents. The most dramatic, high-contrast option for a luxury feel.",
     style: "dark",
     colors: {
-      primary: "#6DB48E",
+      primary: "#6db08a",
       primaryLight: "#162B20",
       primaryDark: "#8CCFAA",
       sidebarBg: "#09090B",
@@ -198,10 +198,10 @@ const themes: ThemeOption[] = [
       kpiBg2: "#2B1520", kpiText2: "#FB7185",
       kpiBg3: "#1F1533", kpiText3: "#A78BFA",
       kpiBg4: "#2B2210", kpiText4: "#FBBF24",
-      kpiBg5: "#162B20", kpiText5: "#6DB48E",
+      kpiBg5: "#162B20", kpiText5: "#6db08a",
       kpiBg6: "#1C1C1F", kpiText6: "#A1A1AA",
       progressBg: "#27272A",
-      progressFill: "#6DB48E",
+      progressFill: "#6db08a",
       badgeBg: "#162B20",
       badgeText: "#8CCFAA",
     },
@@ -246,14 +246,14 @@ export default function ThemePreview() {
               onMouseLeave={() => setHoveredTheme(null)}
               className={`relative text-left rounded-2xl p-4 transition-all duration-300 border-2 ${
                 selectedTheme === theme.id
-                  ? "border-[#6DB48E] shadow-lg shadow-[#6DB48E]/10 scale-[1.02]"
+                  ? "border-[#6db08a] shadow-lg shadow-[#6db08a]/10 scale-[1.02]"
                   : hoveredTheme === theme.id
                     ? "border-gray-300 shadow-md"
                     : "border-transparent shadow-sm"
               } bg-white`}
             >
               {selectedTheme === theme.id && (
-                <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-[#6DB48E] flex items-center justify-center shadow-md">
+                <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-[#6db08a] flex items-center justify-center shadow-md">
                   <Check className="h-3.5 w-3.5 text-white" />
                 </div>
               )}
@@ -264,7 +264,7 @@ export default function ThemePreview() {
                 <div className="h-8 flex-1 rounded-r-lg" style={{ backgroundColor: theme.colors.primary }} />
               </div>
               <h3 className="font-semibold text-sm text-[#1D1D1F]">{theme.name}</h3>
-              <p className="text-xs text-[#6DB48E] font-medium mt-0.5">{theme.subtitle}</p>
+              <p className="text-xs text-[#6db08a] font-medium mt-0.5">{theme.subtitle}</p>
               <p className="text-xs text-[#86868B] mt-1.5 leading-relaxed line-clamp-2">{theme.description}</p>
             </button>
           ))}

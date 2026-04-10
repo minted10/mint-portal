@@ -91,7 +91,7 @@ export default function ShowingsTab({ listingId, readOnly }: { listingId: number
         <div className="flex justify-end">
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-primary hover:bg-mint-dark text-white gap-2" size="sm">
+              <Button className="bg-primary hover:bg-[#5a9a75] text-white gap-2" size="sm">
                 <Plus className="h-4 w-4" />
                 Log Showing
               </Button>
@@ -133,7 +133,7 @@ export default function ShowingsTab({ listingId, readOnly }: { listingId: number
                 </div>
                 <div className="flex justify-end gap-3 pt-2">
                   <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-                  <Button type="submit" disabled={createMutation.isPending} className="bg-primary hover:bg-mint-dark text-white">
+                  <Button type="submit" disabled={createMutation.isPending} className="bg-primary hover:bg-[#5a9a75] text-white">
                     {createMutation.isPending ? "Saving..." : "Save Showing"}
                   </Button>
                 </div>

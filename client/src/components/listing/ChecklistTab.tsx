@@ -200,7 +200,7 @@ function ChecklistItem({
                     setNoteOpen(false);
                     toast.success("Note saved");
                   }}
-                  className="bg-primary hover:bg-mint-dark text-white"
+                  className="bg-primary hover:bg-[#5a9a75] text-white"
                 >
                   Save
                 </Button>

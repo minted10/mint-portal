@@ -59,7 +59,7 @@ export default function Clients() {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-primary hover:bg-mint-dark text-white gap-2">
+            <Button className="bg-primary hover:bg-[#5a9a75] text-white gap-2">
               <UserPlus className="h-4 w-4" />
               Add Client
             </Button>
@@ -120,7 +120,7 @@ export default function Clients() {
                 <Button
                   type="submit"
                   disabled={inviteMutation.isPending}
-                  className="bg-primary hover:bg-mint-dark text-white"
+                  className="bg-primary hover:bg-[#5a9a75] text-white"
                 >
                   {inviteMutation.isPending
                     ? "Sending..."

@@ -139,7 +139,7 @@ export default function InsightsTab({ listingId, readOnly }: { listingId: number
           {editing ? (
             <>
               <Button variant="outline" size="sm" onClick={() => setEditing(false)}>Cancel</Button>
-              <Button size="sm" onClick={handleSave} className="bg-primary hover:bg-mint-dark text-white gap-1">
+              <Button size="sm" onClick={handleSave} className="bg-primary hover:bg-[#5a9a75] text-white gap-1">
                 <Save className="h-3.5 w-3.5" />
                 Save
               </Button>

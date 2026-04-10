@@ -346,7 +346,7 @@ export default function NewListing() {
           <Button
             type="submit"
             disabled={createMutation.isPending}
-            className="bg-primary hover:bg-mint-dark text-white gap-2"
+            className="bg-primary hover:bg-[#5a9a75] text-white gap-2"
           >
             <Save className="h-4 w-4" />
             {createMutation.isPending ? "Creating..." : "Create Listing"}

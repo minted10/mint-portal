@@ -201,14 +201,28 @@ export async function updateChecklistItem(id: number, data: { status?: string; d
 
 export async function getChecklistProgress(listingId: number) {
   const db = await getDb();
-  if (!db) return { total: 0, completed: 0, percentage: 0 };
+  if (!db) return { total: 0, completed: 0, percentage: 0, stages: [] };
   
-  const all = await db.select({ id: checklistItems.id, status: checklistItems.status })
+  const all = await db.select({ id: checklistItems.id, status: checklistItems.status, stage: checklistItems.stage })
     .from(checklistItems).where(eq(checklistItems.listingId, listingId));
   
   const total = all.length;
   const completed = all.filter(i => i.status === "completed").length;
-  return { total, completed, percentage: total > 0 ? Math.round((completed / total) * 100) : 0 };
+  
+  // Build stage-level progress
+  const stageMap = new Map<string, { total: number; completed: number }>();
+  for (const item of all) {
+    const s = stageMap.get(item.stage) || { total: 0, completed: 0 };
+    s.total++;
+    if (item.status === "completed") s.completed++;
+    stageMap.set(item.stage, s);
+  }
+  const stages = STAGE_ORDER.map(name => {
+    const s = stageMap.get(name) || { total: 0, completed: 0 };
+    return { name, total: s.total, completed: s.completed, percentage: s.total > 0 ? Math.round((s.completed / s.total) * 100) : 0 };
+  });
+  
+  return { total, completed, percentage: total > 0 ? Math.round((completed / total) * 100) : 0, stages };
 }
 
 // ─── SHOWING HELPERS ────────────────────────────────────────────────────────
