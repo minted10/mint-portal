@@ -56,6 +56,7 @@ import OffersTab from "@/components/listing/OffersTab";
 import MarketingTab from "@/components/listing/MarketingTab";
 import InsightsTab from "@/components/listing/InsightsTab";
 import EditListingDialog from "@/components/listing/EditListingDialog";
+import MilestoneTracker from "@/components/listing/MilestoneTracker";
 
 /* ── Color Constants ── */
 const MINT = "#6db08a";
@@ -297,6 +298,11 @@ export default function ListingDetail({ id }: { id: number }) {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* ═══ MILESTONE TRACKER ═══ */}
+        <div className="col-span-12 bento-animate" style={{ animationDelay: "25ms" }}>
+          <MilestoneTracker listingStatus={listing.status} listDate={listing.listDate || undefined} />
         </div>
 
         {/* ═══ ROW 2: KPI Stat Cards (4 x 3 cols) ═══ */}

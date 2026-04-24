@@ -77,4 +77,12 @@
 - [x] Fix: 26582 Paseo Callado showing same views/saves for Redfin and Zillow — should be separate numbers
 - [x] Remove deal pipeline card from dashboard
 - [x] Skip smart lists widget for now
+- [ ] BUG: Fix property insights seed data — Redfin/Zillow stats showing same numbers instead of separate
 - [x] Goal tracker card — $20M annual sales volume goal, $5.7M sold so far, progress ring visual
+- [ ] Custom email/password login — add password hash field to user table
+- [ ] Register and login tRPC endpoints with bcrypt password hashing
+- [ ] Login page UI with email + password form
+- [ ] Register page UI for new users
+- [ ] Seed Bryan@MintRealEstate.com as admin user
+- [ ] Keep Manus OAuth as fallback login option
+- [x] Milestone tracker — 8-stage visual progress (Start → Listing Agreement → Home Prep → Coming Soon → Active → Escrow → Contingencies → Closed)
